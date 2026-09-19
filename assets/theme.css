@@ -134,6 +134,14 @@ a {
   text-decoration: none;
 }
 
+/* Several overlays below set their own unconditional `display` for
+   layout purposes and rely on opacity/transform for the open/closed
+   transition, which would otherwise silently defeat the `hidden`
+   attribute and leave an invisible layer intercepting every click. */
+[hidden] {
+  display: none !important;
+}
+
 ul,
 ol {
   list-style: none;
@@ -354,7 +362,11 @@ h1, h2, h3, h4, h5, h6, p {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding: 0 var(--space-16);
+  /* Asymmetric: clears the traffic lights on the left and the
+     search/bag icons on the right, each with a small safety gap,
+     rather than a symmetric guess that can overlap the controls. */
+  padding-left: 80px;
+  padding-right: 96px;
   pointer-events: none;
 }
 
@@ -760,7 +772,8 @@ h1, h2, h3, h4, h5, h6, p {
   }
 
   .finder-titlebar__title {
-    padding: 0 var(--space-12);
+    padding-left: 116px;
+    padding-right: 96px;
     font-size: 12px;
   }
 
@@ -1159,6 +1172,37 @@ h1, h2, h3, h4, h5, h6, p {
   display: block;
 }
 
+/* Below tablet width, five columns leaves no room for the name itself —
+   drop to icon/name/price and let color/size stay discoverable on the
+   product page rather than squeezing every column unreadably thin. */
+@media (max-width: 767px) {
+  .file-browser[data-view="list"] {
+    --file-row-cols: 28px minmax(0, 1fr) 72px;
+  }
+
+  .file-browser[data-view="list"] .file-list__col--color,
+  .file-browser[data-view="list"] .file-list__col--size,
+  .file-browser[data-view="list"] .file-tile__cell--color,
+  .file-browser[data-view="list"] .file-tile__cell--size {
+    display: none;
+  }
+
+  .file-browser[data-view="list"] .file-tile__link {
+    padding: 0 var(--space-4);
+  }
+
+  .file-browser[data-view="list"] .file-list__header {
+    padding: 0 var(--space-4);
+  }
+
+  /* The 72px price column has no room for both the sale price and the
+     struck-through compare-at price — the red color plus the sale dot
+     on the icon already signal "on sale" without it. */
+  .file-browser[data-view="list"] .price__compare-at {
+    display: none;
+  }
+}
+
 /* ==========================================================================
    Empty states
    ========================================================================== */
@@ -1329,6 +1373,28 @@ h1, h2, h3, h4, h5, h6, p {
 .hero__filename {
   font-size: 12px;
   color: var(--color-text-tertiary);
+}
+
+@media (max-width: 767px) {
+  .hero {
+    flex-direction: column;
+    text-align: center;
+    padding: var(--space-10) var(--space-6);
+    gap: var(--space-6);
+  }
+
+  .hero__content {
+    max-width: 100%;
+  }
+
+  .hero__heading {
+    font-size: 24px;
+  }
+
+  .hero__image {
+    width: 140px;
+    height: 140px;
+  }
 }
 
 /* ==========================================================================
