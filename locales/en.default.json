@@ -1,0 +1,78 @@
+{
+  "general": {
+    "meta": {
+      "tags": "Tagged \"{{ tags }}\"",
+      "page": "Page {{ page }}"
+    },
+    "accessibility": {
+      "skip_to_content": "Skip to content"
+    },
+    "sidebar": {
+      "favorites": "Favorites",
+      "toggle": "Show sidebar"
+    },
+    "search": {
+      "label": "Search",
+      "title": "Search",
+      "results_for": "Results for “{{ terms }}”"
+    },
+    "view": {
+      "toggle_label": "View as",
+      "icon_view": "Icon view",
+      "list_view": "List view"
+    },
+    "cart": {
+      "title": "Bag"
+    },
+    "status": {
+      "item_count": {
+        "one": "{{ count }} item",
+        "other": "{{ count }} items"
+      },
+      "result_count": {
+        "one": "{{ count }} result",
+        "other": "{{ count }} results"
+      }
+    },
+    "not_found": {
+      "title": "File Not Found"
+    },
+    "pagination": {
+      "label": "Pagination",
+      "previous": "Previous page",
+      "next": "Next page"
+    },
+    "facets": {
+      "filter": "Filter",
+      "price_min": "Minimum price",
+      "price_max": "Maximum price",
+      "sort_by": "Sort by",
+      "apply": "Apply",
+      "clear": "Clear filters"
+    }
+  },
+  "products": {
+    "price": {
+      "from": "From"
+    },
+    "badges": {
+      "sale": "Sale",
+      "sold_out": "Sold Out"
+    },
+    "collection": {
+      "empty_title": "This folder is empty",
+      "empty_description": "No items match your filters right now.",
+      "empty_action": "View All Products",
+      "column_name": "Name",
+      "column_price": "Price",
+      "column_color": "Color",
+      "column_size": "Size"
+    }
+  },
+  "homepage": {
+    "featured_collection": {
+      "empty_title": "This folder is empty",
+      "empty_description": "Select a collection in the theme editor to populate this folder."
+    }
+  }
+}

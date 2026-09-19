@@ -1,0 +1,91 @@
+{% comment %}
+  Real Shopify storefront filtering + sorting, one form so state never
+  gets lost between the two — checking a filter and changing sort both
+  resubmit the full current state. Works with plain GET requests with
+  JS disabled; degrades to a full page reload.
+  Usage: {% render 'facets', results: collection, results_url: collection.url, preserve_query: null %}
+{% endcomment %}
+{%- liquid
+  assign active_count = 0
+  for filter in results.filters
+    for value in filter.active_values
+      assign active_count = active_count | plus: 1
+    endfor
+  endfor
+-%}
+<details class="facets" data-facets>
+  <summary class="facets__trigger btn btn--secondary">
+    {% render 'icon', name: 'tag' %}
+    <span>{{ 'general.facets.filter' | t }}</span>
+    {%- if active_count > 0 -%}
+      <span class="facets__count">{{ active_count }}</span>
+    {%- endif -%}
+  </summary>
+  <div class="facets__panel">
+    <form method="get" action="{{ results_url }}" data-facets-form>
+      {%- if preserve_query -%}
+        <input type="hidden" name="q" value="{{ preserve_query }}">
+      {%- endif -%}
+
+      {%- for filter in results.filters -%}
+        <fieldset class="facets__group">
+          <legend class="facets__group-label">{{ filter.label }}</legend>
+          {%- if filter.type == 'price_range' -%}
+            <div class="facets__price-range">
+              <label class="visually-hidden" for="FilterPriceMin-{{ forloop.index }}">{{ 'general.facets.price_min' | t }}</label>
+              <input
+                type="number" inputmode="decimal" min="0"
+                id="FilterPriceMin-{{ forloop.index }}"
+                name="{{ filter.min_value.param_name }}"
+                value="{{ filter.min_value.value }}"
+                placeholder="{{ filter.range_min | money_without_trailing_zeros }}"
+                class="field__input facets__price-input"
+              >
+              <span aria-hidden="true">&ndash;</span>
+              <label class="visually-hidden" for="FilterPriceMax-{{ forloop.index }}">{{ 'general.facets.price_max' | t }}</label>
+              <input
+                type="number" inputmode="decimal" min="0"
+                id="FilterPriceMax-{{ forloop.index }}"
+                name="{{ filter.max_value.param_name }}"
+                value="{{ filter.max_value.value }}"
+                placeholder="{{ filter.range_max | money_without_trailing_zeros }}"
+                class="field__input facets__price-input"
+              >
+            </div>
+          {%- else -%}
+            <ul class="facets__list">
+              {%- for value in filter.values -%}
+                {%- if value.count > 0 or value.active -%}
+                  <li>
+                    <label class="facets__checkbox">
+                      <input type="checkbox" name="{{ value.param_name }}" value="{{ value.value }}" {% if value.active %}checked{% endif %}>
+                      <span class="facets__checkbox-box">{% render 'icon', name: 'check' %}</span>
+                      <span class="facets__checkbox-label">{{ value.label }}</span>
+                      <span class="facets__checkbox-count">{{ value.count }}</span>
+                    </label>
+                  </li>
+                {%- endif -%}
+              {%- endfor -%}
+            </ul>
+          {%- endif -%}
+        </fieldset>
+      {%- endfor -%}
+
+      <div class="field facets__sort">
+        <label class="field__label" for="FacetsSort">{{ 'general.facets.sort_by' | t }}</label>
+        <select id="FacetsSort" name="sort_by" class="field__input" data-sort-select>
+          {%- for option in results.sort_options -%}
+            <option value="{{ option.value }}" {% if option.value == results.sort_by %}selected{% endif %}>{{ option.name }}</option>
+          {%- endfor -%}
+        </select>
+      </div>
+
+      <div class="facets__actions">
+        <button type="submit" class="btn btn--primary">{{ 'general.facets.apply' | t }}</button>
+        {%- if active_count > 0 -%}
+          <a href="{{ results_url }}{% if results.sort_by %}?sort_by={{ results.sort_by }}{% endif %}" class="btn btn--secondary">{{ 'general.facets.clear' | t }}</a>
+        {%- endif -%}
+      </div>
+    </form>
+  </div>
+</details>

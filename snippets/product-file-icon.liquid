@@ -1,0 +1,67 @@
+{% comment %}
+  Shared product tile. One piece of markup renders as an icon-view "file"
+  card or reflows into a list-view row purely via CSS on the ancestor
+  [data-view] — never re-rendered by JS, so switching views is instant
+  and correct even with JS disabled (server renders the default view).
+  Usage: {% render 'product-file-icon', product: product %}
+{% endcomment %}
+{%- liquid
+  assign img = product.featured_media.preview_image
+  assign filename = product.title | handleize | append: '.png'
+  assign on_sale = false
+  if product.compare_at_price_min > product.price_min
+    assign on_sale = true
+  endif
+
+  assign color_option = product.options_with_values | where: 'name', 'Color'
+  if color_option == empty
+    assign color_option = product.options_with_values | where: 'name', 'Colour'
+  endif
+  assign size_option = product.options_with_values | where: 'name', 'Size'
+  assign color_text = color_option.first.values | join: ', '
+  assign size_text = size_option.first.values | join: ', '
+-%}
+<li class="file-tile{% unless product.available %} file-tile--unavailable{% endunless %}" data-view-item>
+  <a href="{{ product.url }}" class="file-tile__link">
+    <span class="file-tile__icon-wrap">
+      {%- if img -%}
+        <img
+          class="file-tile__icon"
+          src="{{ img | image_url: width: 320 }}"
+          srcset="{{ img | image_url: width: 160 }} 160w, {{ img | image_url: width: 320 }} 320w, {{ img | image_url: width: 480 }} 480w, {{ img | image_url: width: 640 }} 640w"
+          sizes="(max-width: 480px) 38vw, (max-width: 767px) 26vw, 140px"
+          width="{{ img.width }}"
+          height="{{ img.height }}"
+          alt="{{ img.alt | default: product.title | escape }}"
+          loading="lazy"
+          decoding="async"
+        >
+      {%- else -%}
+        <span class="file-tile__icon file-tile__icon--placeholder">
+          {% render 'icon', name: 'file' %}
+        </span>
+      {%- endif -%}
+      {%- if on_sale -%}
+        <span class="file-tile__badge file-tile__badge--sale">
+          <span class="visually-hidden">{{ 'products.badges.sale' | t }}</span>
+        </span>
+      {%- elsif product.available == false -%}
+        <span class="file-tile__badge file-tile__badge--sold-out">
+          <span class="visually-hidden">{{ 'products.badges.sold_out' | t }}</span>
+        </span>
+      {%- endif -%}
+    </span>
+
+    <span class="file-tile__name">{{ filename }}</span>
+
+    <span class="file-tile__row">
+      <span class="file-tile__cell file-tile__cell--price">{% render 'price', product: product %}</span>
+      <span class="file-tile__cell file-tile__cell--color">
+        <span class="visually-hidden">{{ 'products.collection.column_color' | t }}: </span>{{ color_text | default: '—' }}
+      </span>
+      <span class="file-tile__cell file-tile__cell--size">
+        <span class="visually-hidden">{{ 'products.collection.column_size' | t }}: </span>{{ size_text | default: '—' }}
+      </span>
+    </span>
+  </a>
+</li>

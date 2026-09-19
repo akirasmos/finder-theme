@@ -1,0 +1,119 @@
+{
+  "current": "Default",
+  "presets": {
+    "Default": {
+      "color_accent": "#0850c7",
+      "color_content_bg": "#ffffff",
+      "color_chrome_bg": "#f6f6f7",
+      "default_view": "icon",
+      "sections": {
+        "finder-titlebar": {
+          "type": "finder-titlebar",
+          "settings": {
+            "window_title": "standard.zip"
+          }
+        },
+        "finder-breadcrumb": {
+          "type": "finder-breadcrumb",
+          "settings": {
+            "window_title": "standard.zip"
+          }
+        },
+        "finder-sidebar": {
+          "type": "finder-sidebar",
+          "settings": {
+            "favorites_heading": "Favorites",
+            "tags_heading": "Tags"
+          },
+          "blocks": {
+            "fav-tops": {
+              "type": "favorite_link",
+              "settings": {
+                "collection": "tops",
+                "label": "",
+                "icon": "shirt",
+                "show_count": true
+              }
+            },
+            "fav-bottoms": {
+              "type": "favorite_link",
+              "settings": {
+                "collection": "bottoms",
+                "label": "",
+                "icon": "pants",
+                "show_count": true
+              }
+            },
+            "fav-outerwear": {
+              "type": "favorite_link",
+              "settings": {
+                "collection": "outerwear",
+                "label": "",
+                "icon": "jacket",
+                "show_count": true
+              }
+            },
+            "fav-accessories": {
+              "type": "favorite_link",
+              "settings": {
+                "collection": "accessories",
+                "label": "",
+                "icon": "bag-accessory",
+                "show_count": true
+              }
+            },
+            "fav-sale": {
+              "type": "favorite_link",
+              "settings": {
+                "collection": "sale",
+                "label": "",
+                "icon": "percent",
+                "show_count": true
+              }
+            },
+            "tag-new": {
+              "type": "tag_link",
+              "settings": {
+                "tag": "new",
+                "label": "New Arrivals",
+                "collection": ""
+              }
+            },
+            "tag-cotton": {
+              "type": "tag_link",
+              "settings": {
+                "tag": "cotton",
+                "label": "Cotton",
+                "collection": ""
+              }
+            },
+            "tag-water-resistant": {
+              "type": "tag_link",
+              "settings": {
+                "tag": "water-resistant",
+                "label": "Water-Resistant",
+                "collection": ""
+              }
+            }
+          },
+          "block_order": [
+            "fav-tops",
+            "fav-bottoms",
+            "fav-outerwear",
+            "fav-accessories",
+            "fav-sale",
+            "tag-new",
+            "tag-cotton",
+            "tag-water-resistant"
+          ]
+        },
+        "finder-statusbar": {
+          "type": "finder-statusbar",
+          "settings": {
+            "tagline": "Free shipping over $150"
+          }
+        }
+      }
+    }
+  }
+}

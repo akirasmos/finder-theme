@@ -1,0 +1,44 @@
+{% comment %}
+  Usage: {% render 'pagination', paginate: paginate %}
+{% endcomment %}
+{%- if paginate.pages > 1 -%}
+  <nav class="pagination" aria-label="{{ 'general.pagination.label' | t }}">
+    {%- if paginate.previous -%}
+      <a href="{{ paginate.previous.url }}" class="pagination__link pagination__link--prev">
+        {% render 'icon', name: 'chevron-right', class: 'pagination__chevron pagination__chevron--prev' %}
+        <span class="visually-hidden">{{ 'general.pagination.previous' | t }}</span>
+      </a>
+    {%- else -%}
+      <span class="pagination__link pagination__link--prev" aria-disabled="true">
+        {% render 'icon', name: 'chevron-right', class: 'pagination__chevron pagination__chevron--prev' %}
+        <span class="visually-hidden">{{ 'general.pagination.previous' | t }}</span>
+      </span>
+    {%- endif -%}
+
+    <ul class="pagination__list">
+      {%- for part in paginate.parts -%}
+        <li>
+          {%- if part.is_link -%}
+            <a href="{{ part.url }}" class="pagination__number">{{ part.title }}</a>
+          {%- elsif part.title == paginate.current_page -%}
+            <span class="pagination__number pagination__number--current" aria-current="page">{{ part.title }}</span>
+          {%- else -%}
+            <span class="pagination__ellipsis">{{ part.title }}</span>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+
+    {%- if paginate.next -%}
+      <a href="{{ paginate.next.url }}" class="pagination__link pagination__link--next">
+        {% render 'icon', name: 'chevron-right', class: 'pagination__chevron' %}
+        <span class="visually-hidden">{{ 'general.pagination.next' | t }}</span>
+      </a>
+    {%- else -%}
+      <span class="pagination__link pagination__link--next" aria-disabled="true">
+        {% render 'icon', name: 'chevron-right', class: 'pagination__chevron' %}
+        <span class="visually-hidden">{{ 'general.pagination.next' | t }}</span>
+      </span>
+    {%- endif -%}
+  </nav>
+{%- endif -%}

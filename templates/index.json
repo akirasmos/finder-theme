@@ -1,0 +1,18 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "settings": {
+        "button_link": "/collections/all"
+      }
+    },
+    "featured": {
+      "type": "featured-collection",
+      "settings": {
+        "collection": "all",
+        "heading": "New Arrivals"
+      }
+    }
+  },
+  "order": ["hero", "featured"]
+}

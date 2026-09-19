@@ -1,0 +1,60 @@
+{% comment %}
+  Collection template main content: real Shopify filtering, sorting,
+  pagination, and the shared icon/list product grid (view switch itself
+  lives in the global finder-breadcrumb section's toolbar).
+{% endcomment %}
+<div class="collection-main">
+  {%- paginate collection.products by section.settings.products_per_page -%}
+    <div class="collection-toolbar">
+      {% render 'facets', results: collection, results_url: collection.url %}
+    </div>
+
+    {%- if collection.products.size == 0 -%}
+      {%- liquid
+        assign empty_title = 'products.collection.empty_title' | t
+        assign empty_description = 'products.collection.empty_description' | t
+        assign empty_action_label = 'products.collection.empty_action' | t
+      -%}
+      {% render 'empty-state',
+        icon: 'folder',
+        title: empty_title,
+        description: empty_description,
+        action_label: empty_action_label,
+        action_url: routes.all_products_collection_url
+      %}
+    {%- else -%}
+      <div class="file-browser" data-view-target data-view="{{ settings.default_view | default: 'icon' }}">
+        <div class="file-list__header" data-view-header aria-hidden="true">
+          <span></span>
+          <span>{{ 'products.collection.column_name' | t }}</span>
+          <span>{{ 'products.collection.column_price' | t }}</span>
+          <span>{{ 'products.collection.column_color' | t }}</span>
+          <span>{{ 'products.collection.column_size' | t }}</span>
+        </div>
+        <ul class="file-grid" role="list">
+          {%- for product in collection.products -%}
+            {% render 'product-file-icon', product: product %}
+          {%- endfor -%}
+        </ul>
+      </div>
+      {% render 'pagination', paginate: paginate %}
+    {%- endif -%}
+  {%- endpaginate -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main_collection.name",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "t:sections.main_collection.settings.products_per_page.label",
+      "min": 12,
+      "max": 48,
+      "step": 4,
+      "default": 24
+    }
+  ]
+}
+{% endschema %}

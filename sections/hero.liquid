@@ -1,0 +1,71 @@
+{% comment %}
+  Homepage hero — real merchant-editable content, not hardcoded copy.
+{% endcomment %}
+<section class="hero">
+  <div class="hero__content">
+    <h2 class="hero__heading">{{ section.settings.heading }}</h2>
+    {%- if section.settings.subheading != blank -%}
+      <div class="hero__subheading">{{ section.settings.subheading }}</div>
+    {%- endif -%}
+    {%- if section.settings.button_label != blank and section.settings.button_link != blank -%}
+      <a href="{{ section.settings.button_link }}" class="btn btn--primary hero__button">{{ section.settings.button_label }}</a>
+    {%- endif -%}
+  </div>
+  {%- if section.settings.image -%}
+    <div class="hero__media">
+      <img
+        class="hero__image"
+        src="{{ section.settings.image | image_url: width: 640 }}"
+        srcset="{{ section.settings.image | image_url: width: 320 }} 320w, {{ section.settings.image | image_url: width: 480 }} 480w, {{ section.settings.image | image_url: width: 640 }} 640w, {{ section.settings.image | image_url: width: 960 }} 960w"
+        sizes="(max-width: 767px) 60vw, 320px"
+        width="{{ section.settings.image.width }}"
+        height="{{ section.settings.image.height }}"
+        alt="{{ section.settings.image.alt | default: section.settings.heading | escape }}"
+        loading="eager"
+        fetchpriority="high"
+      >
+      <span class="hero__filename">{{ section.settings.heading | handleize | default: 'welcome' }}.png</span>
+    </div>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.hero.name",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:sections.hero.settings.heading.label",
+      "default": "You've opened standard.zip"
+    },
+    {
+      "type": "richtext",
+      "id": "subheading",
+      "label": "t:sections.hero.settings.subheading.label",
+      "default": "<p>Garments, archived. New drops land in this folder first.</p>"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "t:sections.hero.settings.button_label.label",
+      "default": "Browse All"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "t:sections.hero.settings.button_link.label"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:sections.hero.settings.image.label"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.hero.name"
+    }
+  ]
+}
+{% endschema %}

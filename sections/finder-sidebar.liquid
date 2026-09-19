@@ -1,0 +1,159 @@
+{% comment %}
+  Global left rail: Finder "Favorites" (collections) + "Tags" (filtered
+  links). Block-based so a merchant can add/reorder/relabel entries and
+  assign a per-item icon from the theme's icon set.
+{% endcomment %}
+<nav class="finder-sidebar" id="FinderSidebar" aria-label="{{ 'general.sidebar.favorites' | t }}">
+  {%- assign has_favorites = false -%}
+  {%- assign has_tags = false -%}
+  {%- for block in section.blocks -%}
+    {%- if block.type == 'favorite_link' -%}{%- assign has_favorites = true -%}{%- endif -%}
+    {%- if block.type == 'tag_link' -%}{%- assign has_tags = true -%}{%- endif -%}
+  {%- endfor -%}
+
+  {%- if has_favorites -%}
+    <div class="finder-sidebar__section">
+      <h2 class="finder-sidebar__heading">{{ section.settings.favorites_heading }}</h2>
+      <ul class="finder-sidebar__list">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'favorite_link' -%}
+            {%- liquid
+              assign link_collection = block.settings.collection
+              assign link_url = link_collection.url | default: '#'
+              assign link_label = block.settings.label | default: link_collection.title | default: 'Untitled'
+              assign is_current = false
+              if link_collection and request.path == link_collection.url
+                assign is_current = true
+              endif
+            -%}
+            <li>
+              <a
+                href="{{ link_url }}"
+                class="finder-sidebar__item"
+                {% if is_current %}aria-current="page"{% endif %}
+                {{ block.shopify_attributes }}
+              >
+                {% render 'icon', name: block.settings.icon %}
+                <span>{{ link_label }}</span>
+                {%- if block.settings.show_count and link_collection -%}
+                  <span class="finder-sidebar__count">{{ link_collection.products_count }}</span>
+                {%- endif -%}
+              </a>
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    </div>
+  {%- endif -%}
+
+  {%- if has_tags -%}
+    <div class="finder-sidebar__section">
+      <h2 class="finder-sidebar__heading">{{ section.settings.tags_heading }}</h2>
+      <ul class="finder-sidebar__list">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'tag_link' -%}
+            {%- liquid
+              assign tag_base = block.settings.collection.url | default: routes.all_products_collection_url
+              assign tag_value = block.settings.tag | url_param_escape
+            -%}
+            <li>
+              <a
+                href="{{ tag_base }}?filter.p.tag={{ tag_value }}"
+                class="finder-sidebar__item"
+                {{ block.shopify_attributes }}
+              >
+                {% render 'icon', name: 'tag' %}
+                <span>{{ block.settings.label | default: block.settings.tag }}</span>
+              </a>
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    </div>
+  {%- endif -%}
+</nav>
+<div class="finder-sidebar-backdrop" data-sidebar-backdrop hidden></div>
+
+{% schema %}
+{
+  "name": "t:sections.finder_sidebar.name",
+  "settings": [
+    {
+      "type": "text",
+      "id": "favorites_heading",
+      "label": "t:sections.finder_sidebar.settings.favorites_heading.label",
+      "default": "Favorites"
+    },
+    {
+      "type": "text",
+      "id": "tags_heading",
+      "label": "t:sections.finder_sidebar.settings.tags_heading.label",
+      "default": "Tags"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "favorite_link",
+      "name": "t:sections.finder_sidebar.blocks.favorite_link.name",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "t:sections.finder_sidebar.blocks.favorite_link.settings.collection.label"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "t:sections.finder_sidebar.blocks.favorite_link.settings.label.label",
+          "info": "t:sections.finder_sidebar.blocks.favorite_link.settings.label.info"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "t:sections.finder_sidebar.blocks.favorite_link.settings.icon.label",
+          "options": [
+            { "value": "folder", "label": "Folder" },
+            { "value": "shirt", "label": "Shirt" },
+            { "value": "pants", "label": "Pants" },
+            { "value": "jacket", "label": "Jacket" },
+            { "value": "bag-accessory", "label": "Bag" },
+            { "value": "percent", "label": "Percent" },
+            { "value": "tag", "label": "Tag" }
+          ],
+          "default": "folder"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_count",
+          "label": "t:sections.finder_sidebar.blocks.favorite_link.settings.show_count.label",
+          "default": true
+        }
+      ]
+    },
+    {
+      "type": "tag_link",
+      "name": "t:sections.finder_sidebar.blocks.tag_link.name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "tag",
+          "label": "t:sections.finder_sidebar.blocks.tag_link.settings.tag.label",
+          "info": "t:sections.finder_sidebar.blocks.tag_link.settings.tag.info"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "t:sections.finder_sidebar.blocks.tag_link.settings.label.label",
+          "info": "t:sections.finder_sidebar.blocks.tag_link.settings.label.info"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "t:sections.finder_sidebar.blocks.tag_link.settings.collection.label",
+          "info": "t:sections.finder_sidebar.blocks.tag_link.settings.collection.info"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,18 @@
+{% comment %}
+  Shared empty/error state — Finder's "empty folder" language, used for
+  empty collections, empty search results, and the empty bag.
+  Usage: {% render 'empty-state', icon: 'folder', title: '...', description: '...', action_label: '...', action_url: '...' %}
+{% endcomment %}
+{%- assign empty_state_icon = icon | default: 'folder' -%}
+<div class="empty-state">
+  <div class="empty-state__icon">
+    {% render 'icon', name: empty_state_icon %}
+  </div>
+  <p class="empty-state__title">{{ title }}</p>
+  {%- if description -%}
+    <p class="empty-state__description">{{ description }}</p>
+  {%- endif -%}
+  {%- if action_label and action_url -%}
+    <a href="{{ action_url }}" class="btn btn--secondary empty-state__action">{{ action_label }}</a>
+  {%- endif -%}
+</div>
