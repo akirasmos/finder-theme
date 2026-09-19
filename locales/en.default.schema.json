@@ -143,6 +143,14 @@
     "main_cart": {
       "name": "Bag"
     },
+    "main_search": {
+      "name": "Search results",
+      "settings": {
+        "products_per_page": {
+          "label": "Products per page"
+        }
+      }
+    },
     "featured_collection": {
       "name": "Featured collection",
       "settings": {

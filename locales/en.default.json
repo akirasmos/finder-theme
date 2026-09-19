@@ -5,7 +5,8 @@
       "page": "Page {{ page }}"
     },
     "accessibility": {
-      "skip_to_content": "Skip to content"
+      "skip_to_content": "Skip to content",
+      "close": "Close"
     },
     "sidebar": {
       "favorites": "Favorites",
@@ -14,7 +15,12 @@
     "search": {
       "label": "Search",
       "title": "Search",
-      "results_for": "Results for “{{ terms }}”"
+      "placeholder": "Search standard.zip",
+      "results_for": "Results for “{{ terms }}”",
+      "no_results": "No files found",
+      "no_results_description": "Try a different search term.",
+      "view_all": "View all results for “{{ query }}”",
+      "prompt_title": "Search standard.zip"
     },
     "view": {
       "toggle_label": "View as",
