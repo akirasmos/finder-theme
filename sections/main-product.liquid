@@ -151,6 +151,8 @@
               data-label-available="{{ 'general.cart.move_to_bag' | t }}"
               data-label-sold-out="{{ 'products.product.sold_out' | t }}"
               data-label-unavailable="{{ 'products.product.unavailable' | t }}"
+              data-label-moved="{{ 'general.cart.moved_to_bag' | t }}"
+              data-label-error="{{ 'general.cart.error' | t }}"
               {% unless current_variant.available %}disabled aria-disabled="true"{% endunless %}
             >
               <span data-add-to-bag-label>
@@ -160,6 +162,7 @@
                   {{ 'products.product.sold_out' | t }}
                 {%- endif -%}
               </span>
+              <span class="btn-progress" aria-hidden="true"></span>
             </button>
           </dd>
         </div>

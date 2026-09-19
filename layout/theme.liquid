@@ -42,12 +42,19 @@
     }
   {%- endstyle -%}
 
+  <script>
+    window.Shopify = window.Shopify || {};
+    window.Shopify.routes = window.Shopify.routes || {};
+    window.Shopify.routes.root = "{{ routes.root_url }}";
+  </script>
   <script src="{{ 'theme.js' | asset_url }}" defer="defer"></script>
+  <script src="{{ 'cart.js' | asset_url }}" defer="defer"></script>
 
   {{ content_for_header }}
 </head>
 <body class="finder-body">
   <a class="visually-hidden skip-link" href="#MainContent">{{ 'general.accessibility.skip_to_content' | t }}</a>
+  <div id="CartStatus" class="visually-hidden" role="status" aria-live="polite"></div>
 
   <div class="finder-window" id="FinderWindow">
     {% section 'finder-titlebar' %}

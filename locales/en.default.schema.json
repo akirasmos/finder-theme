@@ -140,6 +140,9 @@
     "main_product": {
       "name": "Product information"
     },
+    "main_cart": {
+      "name": "Bag"
+    },
     "featured_collection": {
       "name": "Featured collection",
       "settings": {

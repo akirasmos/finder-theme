@@ -23,7 +23,18 @@
     },
     "cart": {
       "title": "Bag",
-      "move_to_bag": "Move to Bag"
+      "move_to_bag": "Move to Bag",
+      "moved_to_bag": "Moved to Bag",
+      "error": "Couldn’t Move Item",
+      "empty_title": "This bag is empty",
+      "empty_description": "Items you move to your bag will appear here.",
+      "continue_browsing": "Continue Browsing",
+      "subtotal": "Subtotal",
+      "line_total": "Total",
+      "taxes_note": "Taxes and shipping calculated at checkout.",
+      "checkout": "Check Out",
+      "remove": "Remove",
+      "unavailable": "Currently unavailable"
     },
     "status": {
       "item_count": {
