@@ -137,6 +137,9 @@
         }
       }
     },
+    "main_product": {
+      "name": "Product information"
+    },
     "featured_collection": {
       "name": "Featured collection",
       "settings": {

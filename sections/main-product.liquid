@@ -1,0 +1,187 @@
+{% comment %}
+  Product page, styled as a macOS "Get Info" panel: preview at top, then
+  a metadata table (Kind/Color/Size/Price/Restocked/Where) with the buy
+  box as the table's own final rows rather than a bolted-on widget.
+{% endcomment %}
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign restocked = product.updated_at | date: '%B %-d, %Y'
+  assign where_label = product.type | default: 'products.product.kind_default' | t
+-%}
+<div class="product-info-window" data-money-format="{{ shop.money_format | escape }}">
+  <script type="application/json" data-product-json>{{ product.variants | json }}</script>
+
+  <div class="product-preview">
+    <div class="product-preview__main">
+      {%- if product.featured_media -%}
+        <img
+          class="product-preview__image"
+          data-product-main-image
+          src="{{ product.featured_media.preview_image | image_url: width: 800 }}"
+          srcset="{{ product.featured_media.preview_image | image_url: width: 400 }} 400w, {{ product.featured_media.preview_image | image_url: width: 800 }} 800w, {{ product.featured_media.preview_image | image_url: width: 1200 }} 1200w"
+          sizes="(max-width: 767px) 84vw, 420px"
+          width="{{ product.featured_media.preview_image.width }}"
+          height="{{ product.featured_media.preview_image.height }}"
+          alt="{{ product.featured_media.alt | default: product.title | escape }}"
+          loading="eager"
+          fetchpriority="high"
+        >
+      {%- else -%}
+        <span class="product-preview__placeholder">{% render 'icon', name: 'file' %}</span>
+      {%- endif -%}
+    </div>
+    <p class="product-preview__filename">{{ product.title | handleize }}.png</p>
+
+    {%- if product.media.size > 1 -%}
+      <div class="product-preview__thumbs" role="listbox" aria-label="{{ 'products.product.thumbnails' | t }}">
+        {%- for media in product.media -%}
+          <button
+            type="button"
+            class="product-preview__thumb{% if forloop.first %} is-active{% endif %}"
+            data-product-thumb
+            data-full="{{ media.preview_image | image_url: width: 1200 }}"
+            data-srcset="{{ media.preview_image | image_url: width: 400 }} 400w, {{ media.preview_image | image_url: width: 800 }} 800w, {{ media.preview_image | image_url: width: 1200 }} 1200w"
+            role="option"
+            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+          >
+            <img src="{{ media.preview_image | image_url: width: 120 }}" width="60" height="60" alt="" loading="lazy">
+          </button>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+
+  <div class="info-panel">
+    <h1 class="info-panel__title">{{ product.title }}</h1>
+
+    {%- form 'product', product, data-product-form: true, class: 'info-panel__form' -%}
+      <dl class="info-table">
+        <div class="info-table__row">
+          <dt>{{ 'products.product.kind' | t }}</dt>
+          <dd>{{ product.type | default: 'products.product.kind_default' | t }}</dd>
+        </div>
+
+        {%- for option in product.options_with_values -%}
+          <div class="info-table__row">
+            <dt>{{ option.name }}</dt>
+            <dd>
+              <div class="variant-picker" role="radiogroup" aria-label="{{ option.name }}" data-option-position="{{ forloop.index0 }}">
+                {%- for value in option.values -%}
+                  {%- assign option_input_id = 'ProductOption-' | append: section.id | append: '-' | append: forloop.parentloop.index0 | append: '-' | append: forloop.index0 -%}
+                  <input
+                    type="radio"
+                    id="{{ option_input_id }}"
+                    name="option-{{ forloop.parentloop.index0 }}"
+                    value="{{ value | escape }}"
+                    class="variant-picker__input visually-hidden"
+                    {% if option.selected_value == value %}checked{% endif %}
+                  >
+                  <label for="{{ option_input_id }}" class="variant-picker__pill">{{ value }}</label>
+                {%- endfor -%}
+              </div>
+            </dd>
+          </div>
+        {%- endfor -%}
+
+        <div class="info-table__row">
+          <dt>{{ 'products.product.price' | t }}</dt>
+          <dd>
+            <span class="info-table__price" data-product-price>
+              {%- if current_variant.compare_at_price > current_variant.price -%}
+                <span class="price price--sale">
+                  <span class="price__value" data-price-value>{{ current_variant.price | money }}</span>
+                  <span class="price__compare-at" data-price-compare>{{ current_variant.compare_at_price | money }}</span>
+                </span>
+              {%- else -%}
+                <span data-price-value>{{ current_variant.price | money }}</span>
+                <span class="price__compare-at" data-price-compare hidden></span>
+              {%- endif -%}
+            </span>
+          </dd>
+        </div>
+
+        <div class="info-table__row">
+          <dt>{{ 'products.product.restocked' | t }}</dt>
+          <dd>{{ restocked }}</dd>
+        </div>
+
+        <div class="info-table__row">
+          <dt>{{ 'products.product.where' | t }}</dt>
+          <dd>
+            <a href="{{ routes.all_products_collection_url }}?filter.p.product_type={{ product.type | url_param_escape }}" class="info-table__where-link">
+              {% render 'icon', name: 'folder' %}
+              <span>standard.zip <span aria-hidden="true">&rsaquo;</span> {{ where_label }}</span>
+            </a>
+          </dd>
+        </div>
+
+        <div class="info-table__row info-table__row--availability" data-availability-row {% if current_variant.available %}hidden{% endif %}>
+          <dt>{{ 'products.product.availability' | t }}</dt>
+          <dd class="info-table__availability" data-availability-text>{{ 'products.product.sold_out' | t }}</dd>
+        </div>
+
+        <div class="info-table__row info-table__row--action">
+          <dt class="visually-hidden">
+            <label for="ProductQuantity-{{ section.id }}">{{ 'products.product.quantity' | t }}</label>
+          </dt>
+          <dd class="info-table__action">
+            <div class="quantity-input">
+              <button type="button" class="quantity-input__button" data-quantity-decrease aria-label="{{ 'products.product.quantity_decrease' | t }}">
+                {% render 'icon', name: 'minus' %}
+              </button>
+              <input
+                type="number"
+                name="quantity"
+                id="ProductQuantity-{{ section.id }}"
+                value="1"
+                min="1"
+                class="quantity-input__field"
+                data-quantity-input
+                inputmode="numeric"
+              >
+              <button type="button" class="quantity-input__button" data-quantity-increase aria-label="{{ 'products.product.quantity_increase' | t }}">
+                {% render 'icon', name: 'plus' %}
+              </button>
+            </div>
+            <input type="hidden" name="id" value="{{ current_variant.id }}" data-product-variant-id>
+            <button
+              type="submit"
+              class="btn btn--primary info-table__submit"
+              data-add-to-bag
+              data-label-available="{{ 'general.cart.move_to_bag' | t }}"
+              data-label-sold-out="{{ 'products.product.sold_out' | t }}"
+              data-label-unavailable="{{ 'products.product.unavailable' | t }}"
+              {% unless current_variant.available %}disabled aria-disabled="true"{% endunless %}
+            >
+              <span data-add-to-bag-label>
+                {%- if current_variant.available -%}
+                  {{ 'general.cart.move_to_bag' | t }}
+                {%- else -%}
+                  {{ 'products.product.sold_out' | t }}
+                {%- endif -%}
+              </span>
+            </button>
+          </dd>
+        </div>
+      </dl>
+    {%- endform -%}
+
+    {%- if product.description != blank -%}
+      <details class="info-panel__description" open>
+        <summary>
+          {% render 'icon', name: 'chevron-down' %}
+          <span>{{ 'products.product.description' | t }}</span>
+        </summary>
+        <div class="rte">{{ product.description }}</div>
+      </details>
+    {%- endif -%}
+  </div>
+</div>
+
+<script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+
+{% schema %}
+{
+  "name": "t:sections.main_product.name"
+}
+{% endschema %}
