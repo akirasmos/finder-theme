@@ -62,7 +62,7 @@
 
   --color-danger: #d70015;
   --color-danger-bg: rgba(215, 0, 21, 0.08);
-  --color-success: #1a8a29;
+  --color-success: #158023;
 
   /* Traffic lights — approximated macOS values, not asset-derived */
   --tl-red: #ff5f57;
@@ -222,8 +222,8 @@ h1, h2, h3, h4, h5, h6, p {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 24px;
   flex: 0 0 auto;
   color: rgba(255, 255, 255, 0.85);
 }
@@ -399,7 +399,7 @@ h1, h2, h3, h4, h5, h6, p {
 .traffic-lights {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .traffic-lights__button {
@@ -652,9 +652,9 @@ h1, h2, h3, h4, h5, h6, p {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 22px;
-  border-radius: 4px;
+  width: 26px;
+  height: 24px;
+  border-radius: var(--radius-sm);
   color: var(--color-text-tertiary);
 }
 
@@ -930,7 +930,7 @@ h1, h2, h3, h4, h5, h6, p {
   height: 16px;
   flex: 0 0 auto;
   border: 1px solid var(--color-border-strong);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   background: var(--color-overlay-bg);
   color: transparent;
 }
@@ -1056,7 +1056,7 @@ h1, h2, h3, h4, h5, h6, p {
 }
 
 .file-tile__badge--sold-out {
-  background: rgba(0, 0, 0, 0.45);
+  background: var(--color-text-secondary);
 }
 
 .file-tile--unavailable .file-tile__icon {
