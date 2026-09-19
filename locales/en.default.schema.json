@@ -143,6 +143,60 @@
     "main_cart": {
       "name": "Bag"
     },
+    "main_404": {
+      "name": "404 page"
+    },
+    "main_page": {
+      "name": "Page"
+    },
+    "footer": {
+      "name": "Footer",
+      "settings": {
+        "heading": {
+          "label": "Heading"
+        },
+        "about_text": {
+          "label": "About text"
+        },
+        "instagram_url": {
+          "label": "Instagram URL"
+        },
+        "tiktok_url": {
+          "label": "TikTok URL"
+        },
+        "copyright_extra": {
+          "label": "Additional copyright line",
+          "info": "Shown after the automatic © year and shop name"
+        }
+      },
+      "blocks": {
+        "link": {
+          "name": "Link",
+          "settings": {
+            "label": {
+              "label": "Label"
+            },
+            "url": {
+              "label": "Link"
+            }
+          }
+        }
+      }
+    },
+    "announcement_bar": {
+      "name": "Announcement bar",
+      "settings": {
+        "message": {
+          "label": "Message"
+        },
+        "link": {
+          "label": "Link"
+        },
+        "dismissible": {
+          "label": "Allow visitors to dismiss"
+        }
+      }
+    },
     "main_search": {
       "name": "Search results",
       "settings": {

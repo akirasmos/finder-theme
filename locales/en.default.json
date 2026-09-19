@@ -53,7 +53,9 @@
       }
     },
     "not_found": {
-      "title": "File Not Found"
+      "title": "File Not Found",
+      "description": "The file you're looking for could not be located. It may have been moved, renamed, or deleted.",
+      "action": "Go to Homepage"
     },
     "pagination": {
       "label": "Pagination",

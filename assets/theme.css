@@ -94,6 +94,10 @@ body {
 }
 
 body {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
   background: var(--color-window-bg);
   color: var(--color-text);
   font-family: var(--font-sans);
@@ -186,6 +190,46 @@ h1, h2, h3, h4, h5, h6, p {
 }
 
 /* ==========================================================================
+   Announcement bar
+   ========================================================================== */
+.announcement-bar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-8);
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.announcement-bar__message a {
+  text-decoration: underline;
+}
+
+.announcement-bar__dismiss {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.announcement-bar__dismiss:hover {
+  color: #ffffff;
+}
+
+.announcement-bar__dismiss svg {
+  width: 10px;
+  height: 10px;
+}
+
+/* ==========================================================================
    The window
    No corner radius, no outer drop shadow: this is not a floating window
    over a desktop, it IS the page, edge to edge, at every breakpoint.
@@ -199,10 +243,11 @@ h1, h2, h3, h4, h5, h6, p {
     "statusbar statusbar";
   grid-template-columns: var(--sidebar-width) 1fr;
   grid-template-rows: var(--titlebar-height) var(--breadcrumb-height) 1fr var(--statusbar-height);
-  height: 100vh;
-  height: 100dvh;
+  flex: 1 1 auto;
+  min-height: 0;
   width: 100%;
   background: var(--color-content-bg);
+  position: relative;
 }
 
 /* Shopify's section wrapper divs sit between .finder-window and our chrome
@@ -214,6 +259,7 @@ h1, h2, h3, h4, h5, h6, p {
 
 .finder-main {
   grid-area: main;
+  min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
   background: var(--color-content-bg);
@@ -561,6 +607,26 @@ h1, h2, h3, h4, h5, h6, p {
   color: var(--color-text-tertiary);
 }
 
+.finder-statusbar__tagline {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  height: 100%;
+  padding: 0 var(--space-1);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-tertiary);
+}
+
+.finder-statusbar__tagline:hover {
+  color: var(--color-text);
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.finder-statusbar__tagline svg {
+  width: 12px;
+  height: 12px;
+}
+
 .view-toggle {
   display: flex;
   align-items: center;
@@ -699,7 +765,7 @@ h1, h2, h3, h4, h5, h6, p {
   }
 
   .finder-sidebar {
-    position: fixed;
+    position: absolute;
     top: var(--titlebar-height);
     bottom: 0;
     left: 0;
@@ -718,11 +784,8 @@ h1, h2, h3, h4, h5, h6, p {
 
   .finder-sidebar-backdrop {
     display: block;
-    position: fixed;
-    top: var(--titlebar-height);
-    right: 0;
-    bottom: 0;
-    left: 0;
+    position: absolute;
+    inset: 0;
     background: rgba(0, 0, 0, 0.24);
     z-index: 150;
     opacity: 0;
@@ -2041,6 +2104,130 @@ h1, h2, h3, h4, h5, h6, p {
   font-size: 12px;
   color: var(--color-text-tertiary);
   margin-top: var(--space-1);
+}
+
+/* ==========================================================================
+   Footer drawer
+   ========================================================================== */
+.footer-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 250;
+}
+
+.footer-drawer__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.28);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.footer-drawer.is-open .footer-drawer__backdrop {
+  opacity: 1;
+}
+
+.footer-drawer__panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-height: 72vh;
+  overflow-y: auto;
+  background: var(--color-overlay-bg);
+  border-top: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-8) var(--space-8) var(--space-10);
+  transform: translateY(100%);
+  transition: transform 0.22s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.footer-drawer.is-open .footer-drawer__panel {
+  transform: translateY(0);
+}
+
+.footer-drawer__close {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+}
+
+.footer-drawer__content {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.footer-drawer__heading {
+  font-size: 16px;
+  font-weight: 650;
+  margin-bottom: var(--space-3);
+}
+
+.footer-drawer__about {
+  padding-top: 0;
+}
+
+.footer-drawer__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-6);
+  margin-top: var(--space-5);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-border);
+}
+
+.footer-drawer__links a {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.footer-drawer__links a:hover {
+  color: var(--color-text);
+  text-decoration: underline;
+}
+
+.footer-drawer__social {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-5);
+}
+
+.footer-drawer__copyright {
+  margin-top: var(--space-6);
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+}
+
+@media (min-width: 768px) {
+  .footer-drawer__panel {
+    max-width: 560px;
+    margin: 0 auto;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+}
+
+/* ==========================================================================
+   404 and generic pages
+   ========================================================================== */
+.not-found {
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-content {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: var(--space-10) var(--space-6) var(--space-16);
+}
+
+.page-content__title {
+  font-size: 22px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  margin-bottom: var(--space-6);
 }
 
 /* Reduced motion */

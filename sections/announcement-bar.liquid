@@ -1,0 +1,47 @@
+{% comment %}
+  Optional thin strip above the title bar. The window (below) always
+  fills exactly whatever space remains via flexbox, so the total of
+  announcement + window is still the full viewport — nothing floats.
+  Renders nothing at all when the merchant hasn't set a message.
+{% endcomment %}
+{%- if section.settings.message != blank -%}
+  <div class="announcement-bar" data-announcement-bar>
+    <p class="announcement-bar__message">
+      {%- if section.settings.link != blank -%}
+        <a href="{{ section.settings.link }}">{{ section.settings.message }}</a>
+      {%- else -%}
+        {{ section.settings.message }}
+      {%- endif -%}
+    </p>
+    {%- if section.settings.dismissible -%}
+      <button type="button" class="announcement-bar__dismiss" data-announcement-dismiss aria-label="{{ 'general.accessibility.close' | t }}">
+        {% render 'icon', name: 'close' %}
+      </button>
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.announcement_bar.name",
+  "settings": [
+    {
+      "type": "text",
+      "id": "message",
+      "label": "t:sections.announcement_bar.settings.message.label",
+      "default": "Free shipping on U.S. orders over $150"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "t:sections.announcement_bar.settings.link.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "dismissible",
+      "label": "t:sections.announcement_bar.settings.dismissible.label",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

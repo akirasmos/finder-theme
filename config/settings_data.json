@@ -112,6 +112,40 @@
           "settings": {
             "tagline": "Free shipping over $150"
           }
+        },
+        "footer": {
+          "type": "footer",
+          "settings": {
+            "heading": "About standard.zip",
+            "about_text": "<p>Small-batch garments, shipped worldwide. Questions? We read every email.</p>",
+            "instagram_url": "",
+            "tiktok_url": "",
+            "copyright_extra": ""
+          },
+          "blocks": {
+            "link-about": {
+              "type": "link",
+              "settings": {
+                "label": "About",
+                "url": "/pages/about"
+              }
+            },
+            "link-shipping": {
+              "type": "link",
+              "settings": {
+                "label": "Shipping & Returns",
+                "url": "/pages/shipping-returns"
+              }
+            },
+            "link-contact": {
+              "type": "link",
+              "settings": {
+                "label": "Contact",
+                "url": "/pages/contact"
+              }
+            }
+          },
+          "block_order": ["link-about", "link-shipping", "link-contact"]
         }
       }
     }

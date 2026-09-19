@@ -8,6 +8,78 @@
   var MOBILE_BREAKPOINT = 768;
 
   /* --------------------------------------------------------------------
+     Announcement bar dismiss (remembered for the browser session only)
+     -------------------------------------------------------------------- */
+  function initAnnouncementBar() {
+    var bar = document.querySelector('[data-announcement-bar]');
+    if (!bar) return;
+
+    var dismissed = false;
+    try {
+      dismissed = window.sessionStorage.getItem('sz-announcement-dismissed') === 'true';
+    } catch (e) {
+      /* ignore */
+    }
+    if (dismissed) {
+      bar.hidden = true;
+      return;
+    }
+
+    var dismissBtn = bar.querySelector('[data-announcement-dismiss]');
+    if (!dismissBtn) return;
+    dismissBtn.addEventListener('click', function () {
+      bar.hidden = true;
+      try {
+        window.sessionStorage.setItem('sz-announcement-dismissed', 'true');
+      } catch (e) {
+        /* ignore */
+      }
+    });
+  }
+
+  /* --------------------------------------------------------------------
+     Footer drawer (slides up from the status bar's tagline/info control)
+     -------------------------------------------------------------------- */
+  function initFooterDrawer() {
+    var trigger = document.querySelector('[data-footer-toggle]');
+    var drawer = document.querySelector('[data-footer-drawer]');
+    if (!trigger || !drawer) return;
+
+    var backdrop = drawer.querySelector('[data-footer-backdrop]');
+    var closeBtn = drawer.querySelector('[data-footer-close]');
+    var lastFocused = null;
+
+    function open() {
+      lastFocused = document.activeElement;
+      drawer.hidden = false;
+      window.requestAnimationFrame(function () {
+        drawer.classList.add('is-open');
+      });
+      document.body.style.overflow = 'hidden';
+      if (closeBtn) closeBtn.focus();
+      document.addEventListener('keydown', onKeydown);
+    }
+
+    function close() {
+      drawer.classList.remove('is-open');
+      document.body.style.overflow = '';
+      document.removeEventListener('keydown', onKeydown);
+      window.setTimeout(function () {
+        drawer.hidden = true;
+      }, 220);
+      if (lastFocused) lastFocused.focus();
+    }
+
+    function onKeydown(event) {
+      if (event.key === 'Escape') close();
+    }
+
+    trigger.addEventListener('click', open);
+    if (backdrop) backdrop.addEventListener('click', close);
+    if (closeBtn) closeBtn.addEventListener('click', close);
+  }
+
+  /* --------------------------------------------------------------------
      Mobile sidebar sheet
      -------------------------------------------------------------------- */
   function initSidebar() {
@@ -131,6 +203,8 @@
     });
   }
 
+  initAnnouncementBar();
+  initFooterDrawer();
   initSidebar();
   initViewToggle();
 })();

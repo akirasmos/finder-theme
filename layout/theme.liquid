@@ -56,6 +56,8 @@
   <a class="visually-hidden skip-link" href="#MainContent">{{ 'general.accessibility.skip_to_content' | t }}</a>
   <div id="CartStatus" class="visually-hidden" role="status" aria-live="polite"></div>
 
+  {% section 'announcement-bar' %}
+
   <div class="finder-window" id="FinderWindow">
     {% section 'finder-titlebar' %}
     {% section 'finder-sidebar' %}
@@ -69,6 +71,7 @@
   </div>
 
   {% render 'spotlight-search' %}
+  {% section 'footer' %}
   <script src="{{ 'predictive-search.js' | asset_url }}" defer="defer"></script>
 </body>
 </html>

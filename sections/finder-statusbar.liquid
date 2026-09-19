@@ -15,7 +15,10 @@
         {%- endif -%}
     {%- endcase -%}
   </span>
-  <span class="finder-statusbar__tagline">{{ section.settings.tagline }}</span>
+  <button type="button" class="finder-statusbar__tagline" data-footer-toggle aria-haspopup="dialog">
+    {% render 'icon', name: 'info' %}
+    <span>{{ section.settings.tagline }}</span>
+  </button>
 </footer>
 
 {% schema %}
