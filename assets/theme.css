@@ -721,7 +721,7 @@ h1, h2, h3, h4, h5, h6, p {
 /* ==========================================================================
    Collection / search main content wrapper
    ========================================================================== */
-.collection-main {
+.file-browser {
   padding-bottom: var(--space-16);
 }
 
@@ -870,9 +870,17 @@ h1, h2, h3, h4, h5, h6, p {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   text-align: center;
   gap: var(--space-2);
-  padding: var(--space-16) var(--space-6);
+  /* Centers between the breadcrumb and status bar regardless of how
+     little content is in the empty state, rather than relying on a
+     percentage height, which can't resolve through the auto-height
+     Shopify section wrapper div sitting between .finder-main and this
+     element. */
+  min-height: calc(100vh - var(--titlebar-height) - var(--breadcrumb-height) - var(--statusbar-height));
+  min-height: calc(100dvh - var(--titlebar-height) - var(--breadcrumb-height) - var(--statusbar-height));
+  padding: var(--space-6);
   color: var(--color-text-secondary);
 }
 
@@ -1875,12 +1883,8 @@ h1, h2, h3, h4, h5, h6, p {
 /* ==========================================================================
    404 and generic pages
    ========================================================================== */
-.not-found {
-  min-height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+/* .not-found has no styling of its own — .empty-state (rendered inside
+   it) now handles its own full-height centering directly. */
 
 .page-content {
   max-width: 640px;
