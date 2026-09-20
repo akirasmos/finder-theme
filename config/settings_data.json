@@ -26,30 +26,30 @@
             "locations_heading": "Locations"
           },
           "blocks": {
-            "fav-tops": {
+            "fav-recents": {
               "type": "favorite_link",
               "settings": {
-                "collection": "tops",
-                "label": "",
-                "icon": "shirt",
+                "collection": "recents",
+                "label": "Recents",
+                "icon": "clock",
                 "show_count": true
               }
             },
-            "fav-bottoms": {
+            "fav-all": {
               "type": "favorite_link",
               "settings": {
-                "collection": "bottoms",
-                "label": "",
-                "icon": "pants",
+                "collection": "all",
+                "label": "All",
+                "icon": "grid",
                 "show_count": true
               }
             },
-            "fav-outerwear": {
+            "fav-clothing": {
               "type": "favorite_link",
               "settings": {
-                "collection": "outerwear",
-                "label": "",
-                "icon": "jacket",
+                "collection": "clothing",
+                "label": "Clothing",
+                "icon": "folder",
                 "show_count": true
               }
             },
@@ -58,7 +58,7 @@
               "settings": {
                 "collection": "accessories",
                 "label": "",
-                "icon": "bag-accessory",
+                "icon": "folder",
                 "show_count": true
               }
             },
@@ -70,14 +70,24 @@
                 "icon": "bag",
                 "show_cart_count": true
               }
+            },
+            "loc-gallery": {
+              "type": "location_link",
+              "settings": {
+                "label": "Gallery",
+                "url": "/pages/gallery",
+                "icon": "image",
+                "show_cart_count": false
+              }
             }
           },
           "block_order": [
-            "fav-tops",
-            "fav-bottoms",
-            "fav-outerwear",
+            "fav-recents",
+            "fav-all",
+            "fav-clothing",
             "fav-accessories",
-            "loc-bag"
+            "loc-bag",
+            "loc-gallery"
           ]
         },
         "finder-statusbar": {
