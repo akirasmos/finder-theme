@@ -1336,6 +1336,15 @@ h1, h2, h3, h4, h5, h6, p {
   .info-table__row {
     grid-template-columns: 96px 1fr;
   }
+
+  /* Re-assert the full-width override: this selector has the same
+     specificity as .info-table__row above and comes later in the
+     mobile-only cascade too, so without this the action row would
+     lose its 1fr column back to the 96px hidden-label reservation,
+     squeezing the "Move to Bag" button width and clipping its label. */
+  .info-table__row--action {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ==========================================================================
