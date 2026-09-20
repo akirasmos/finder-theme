@@ -2,7 +2,6 @@
   Usage: {% render 'cart-item', item: item, line_index: forloop.index %}
 {% endcomment %}
 {%- liquid
-  assign filename = item.product.title | handleize | append: '.png'
   assign quantity_tracked = false
   if item.variant.inventory_management == 'shopify' and item.variant.inventory_policy == 'deny'
     assign quantity_tracked = true
@@ -27,7 +26,7 @@
   </a>
 
   <div class="bag-item__info">
-    <a href="{{ item.url }}" class="bag-item__name">{{ filename }}</a>
+    <a href="{{ item.url }}" class="bag-item__name">{{ item.product.title }}</a>
     {%- if item.variant.title != 'Default Title' -%}
       <p class="bag-item__variant">{{ item.variant.title }}</p>
     {%- endif -%}
@@ -48,7 +47,7 @@
         value="{{ item.quantity }}"
         min="0"
         {% if quantity_tracked %}max="{{ quantity_max }}"{% endif %}
-        aria-label="{{ 'products.product.quantity' | t }}: {{ filename }}"
+        aria-label="{{ 'products.product.quantity' | t }}: {{ item.product.title }}"
         data-cart-quantity-input
         data-line="{{ line_index }}"
       >
@@ -67,7 +66,7 @@
 
   <div class="bag-item__price" data-cart-item-price>{{ item.final_line_price | money }}</div>
 
-  <button type="button" class="bag-item__remove" data-cart-remove aria-label="{{ 'general.cart.remove' | t }}: {{ filename }}">
+  <button type="button" class="bag-item__remove" data-cart-remove aria-label="{{ 'general.cart.remove' | t }}: {{ item.product.title }}">
     {% render 'icon', name: 'trash' %}
   </button>
 </li>

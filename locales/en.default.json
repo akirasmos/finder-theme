@@ -80,7 +80,6 @@
       "kind_default": "Item",
       "price": "Price",
       "created": "Created",
-      "where": "Where",
       "availability": "Availability",
       "sold_out": "Sold Out",
       "unavailable": "Unavailable",

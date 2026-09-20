@@ -119,26 +119,6 @@
         }
       }
     },
-    "hero": {
-      "name": "Hero",
-      "settings": {
-        "heading": {
-          "label": "Heading"
-        },
-        "subheading": {
-          "label": "Subheading"
-        },
-        "button_label": {
-          "label": "Button label"
-        },
-        "button_link": {
-          "label": "Button link"
-        },
-        "image": {
-          "label": "Image"
-        }
-      }
-    },
     "main_product": {
       "name": "Product information"
     },

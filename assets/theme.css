@@ -915,87 +915,6 @@ h1, h2, h3, h4, h5, h6, p {
 }
 
 /* ==========================================================================
-   Hero
-   ========================================================================== */
-.hero {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-12);
-  padding: var(--space-16) var(--space-8);
-  max-width: 1120px;
-  margin: 0 auto;
-}
-
-.hero__content {
-  max-width: 46ch;
-}
-
-.hero__heading {
-  font-size: 28px;
-  font-weight: 650;
-  letter-spacing: -0.01em;
-  color: var(--color-text);
-  margin-bottom: var(--space-4);
-}
-
-.hero__subheading {
-  font-size: 15px;
-  color: var(--color-text-secondary);
-  margin-bottom: var(--space-6);
-}
-
-.hero__subheading p + p {
-  margin-top: var(--space-3);
-}
-
-.hero__button {
-  height: 36px;
-  padding: 0 var(--space-6);
-}
-
-.hero__media {
-  flex: 0 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.hero__image {
-  width: 200px;
-  height: 200px;
-  object-fit: contain;
-}
-
-.hero__filename {
-  font-size: 12px;
-  color: var(--color-text-tertiary);
-}
-
-@media (max-width: 767px) {
-  .hero {
-    flex-direction: column;
-    text-align: center;
-    padding: var(--space-10) var(--space-6);
-    gap: var(--space-6);
-  }
-
-  .hero__content {
-    max-width: 100%;
-  }
-
-  .hero__heading {
-    font-size: 24px;
-  }
-
-  .hero__image {
-    width: 140px;
-    height: 140px;
-  }
-}
-
-/* ==========================================================================
    Featured collection (homepage teaser)
    ========================================================================== */
 .featured-collection {
@@ -1149,22 +1068,6 @@ h1, h2, h3, h4, h5, h6, p {
 .info-table__row--availability dd {
   color: var(--color-danger);
   font-weight: 600;
-}
-
-.info-table__where-link {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  color: var(--color-text-secondary);
-}
-
-.info-table__where-link:hover {
-  color: var(--color-text);
-}
-
-.info-table__where-link svg {
-  width: 13px;
-  height: 13px;
 }
 
 .info-table__row--action {

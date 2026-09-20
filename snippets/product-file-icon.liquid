@@ -4,7 +4,6 @@
 {% endcomment %}
 {%- liquid
   assign img = product.featured_media.preview_image
-  assign filename = product.title | handleize | append: '.png'
   assign on_sale = false
   if product.compare_at_price_min > product.price_min
     assign on_sale = true
@@ -41,7 +40,7 @@
       {%- endif -%}
     </span>
 
-    <span class="file-tile__name">{{ filename }}</span>
+    <span class="file-tile__name">{{ product.title }}</span>
     <span class="file-tile__price">{% render 'price', product: product %}</span>
   </a>
 </li>

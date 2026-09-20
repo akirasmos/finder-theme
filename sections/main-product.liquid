@@ -1,12 +1,18 @@
 {% comment %}
   Product page, styled as a macOS "Get Info" panel: preview at top, then
-  a metadata table (Kind/Color/Size/Price/Restocked/Where) with the buy
-  box as the table's own final rows rather than a bolted-on widget.
+  a metadata table (Kind/Created/Color/Size/Price) with the buy box as
+  the table's own final rows rather than a bolted-on widget.
 {% endcomment %}
 {%- liquid
   assign current_variant = product.selected_or_first_available_variant
   assign created = product.created_at | date: '%B %-d, %Y, %-I:%M %p'
-  assign where_label = product.type | default: 'products.product.kind_default' | t
+  assign kind_label = product.category.name
+  if kind_label == blank
+    assign kind_label = product.type
+  endif
+  if kind_label == blank
+    assign kind_label = 'products.product.kind_default' | t
+  endif
 -%}
 <div class="product-info-window" data-money-format="{{ shop.money_format | escape }}">
   <script type="application/json" data-product-json>{{ product.variants | json }}</script>
@@ -30,7 +36,7 @@
         <span class="product-preview__placeholder">{% render 'icon', name: 'file' %}</span>
       {%- endif -%}
     </div>
-    <p class="product-preview__filename">{{ product.title | handleize }}.png</p>
+    <p class="product-preview__filename">{{ product.title }}</p>
 
     {%- if product.media.size > 1 -%}
       <div class="product-preview__thumbs" role="listbox" aria-label="{{ 'products.product.thumbnails' | t }}">
@@ -58,7 +64,12 @@
       <dl class="info-table">
         <div class="info-table__row">
           <dt>{{ 'products.product.kind' | t }}</dt>
-          <dd>{{ product.type | default: 'products.product.kind_default' | t }}</dd>
+          <dd>{{ kind_label }}</dd>
+        </div>
+
+        <div class="info-table__row">
+          <dt>{{ 'products.product.created' | t }}</dt>
+          <dd>{{ created }}</dd>
         </div>
 
         {%- for option in product.options_with_values -%}
@@ -97,21 +108,6 @@
                 <span class="price__compare-at" data-price-compare hidden></span>
               {%- endif -%}
             </span>
-          </dd>
-        </div>
-
-        <div class="info-table__row">
-          <dt>{{ 'products.product.created' | t }}</dt>
-          <dd>{{ created }}</dd>
-        </div>
-
-        <div class="info-table__row">
-          <dt>{{ 'products.product.where' | t }}</dt>
-          <dd>
-            <a href="{{ routes.all_products_collection_url }}?filter.p.product_type={{ product.type | url_param_escape }}" class="info-table__where-link">
-              {% render 'icon', name: 'folder' %}
-              <span>standard.zip <span aria-hidden="true">&rsaquo;</span> {{ where_label }}</span>
-            </a>
           </dd>
         </div>
 
