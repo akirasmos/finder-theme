@@ -1,14 +1,15 @@
 {% comment %}
-  Global left rail: Finder "Favorites" (collections) + "Tags" (filtered
-  links). Block-based so a merchant can add/reorder/relabel entries and
-  assign a per-item icon from the theme's icon set.
+  Global left rail: Finder "Favorites" (collections) + "Locations"
+  (internal navigation shortcuts, e.g. the Bag). Block-based so a
+  merchant can add/reorder/relabel entries and assign a per-item icon
+  from the theme's icon set.
 {% endcomment %}
 <nav class="finder-sidebar" id="FinderSidebar" aria-label="{{ 'general.sidebar.favorites' | t }}">
   {%- assign has_favorites = false -%}
-  {%- assign has_tags = false -%}
+  {%- assign has_locations = false -%}
   {%- for block in section.blocks -%}
     {%- if block.type == 'favorite_link' -%}{%- assign has_favorites = true -%}{%- endif -%}
-    {%- if block.type == 'tag_link' -%}{%- assign has_tags = true -%}{%- endif -%}
+    {%- if block.type == 'location_link' -%}{%- assign has_locations = true -%}{%- endif -%}
   {%- endfor -%}
 
   {%- if has_favorites -%}
@@ -46,24 +47,32 @@
     </div>
   {%- endif -%}
 
-  {%- if has_tags -%}
+  {%- if has_locations -%}
     <div class="finder-sidebar__section">
-      <h2 class="finder-sidebar__heading">{{ section.settings.tags_heading }}</h2>
+      <h2 class="finder-sidebar__heading">{{ section.settings.locations_heading }}</h2>
       <ul class="finder-sidebar__list">
         {%- for block in section.blocks -%}
-          {%- if block.type == 'tag_link' -%}
+          {%- if block.type == 'location_link' -%}
             {%- liquid
-              assign tag_base = block.settings.collection.url | default: routes.all_products_collection_url
-              assign tag_value = block.settings.tag | url_param_escape
+              assign loc_url = block.settings.url | default: '#'
+              assign is_current = false
+              if loc_url != '#' and request.path == loc_url
+                assign is_current = true
+              endif
             -%}
             <li>
               <a
-                href="{{ tag_base }}?filter.p.tag={{ tag_value }}"
+                href="{{ loc_url }}"
                 class="finder-sidebar__item"
+                {% if is_current %}aria-current="page"{% endif %}
+                {% if block.settings.show_cart_count %}data-cart-count-container data-cart-count-class="finder-sidebar__count"{% endif %}
                 {{ block.shopify_attributes }}
               >
-                {% render 'icon', name: 'tag' %}
-                <span>{{ block.settings.label | default: block.settings.tag }}</span>
+                {% render 'icon', name: block.settings.icon %}
+                <span>{{ block.settings.label }}</span>
+                {%- if block.settings.show_cart_count and cart.item_count > 0 -%}
+                  <span class="finder-sidebar__count" data-cart-count>{{ cart.item_count }}</span>
+                {%- endif -%}
               </a>
             </li>
           {%- endif -%}
@@ -86,9 +95,9 @@
     },
     {
       "type": "text",
-      "id": "tags_heading",
-      "label": "t:sections.finder_sidebar.settings.tags_heading.label",
-      "default": "Tags"
+      "id": "locations_heading",
+      "label": "t:sections.finder_sidebar.settings.locations_heading.label",
+      "default": "Locations"
     }
   ],
   "blocks": [
@@ -131,26 +140,39 @@
       ]
     },
     {
-      "type": "tag_link",
-      "name": "t:sections.finder_sidebar.blocks.tag_link.name",
+      "type": "location_link",
+      "name": "t:sections.finder_sidebar.blocks.location_link.name",
       "settings": [
         {
           "type": "text",
-          "id": "tag",
-          "label": "t:sections.finder_sidebar.blocks.tag_link.settings.tag.label",
-          "info": "t:sections.finder_sidebar.blocks.tag_link.settings.tag.info"
-        },
-        {
-          "type": "text",
           "id": "label",
-          "label": "t:sections.finder_sidebar.blocks.tag_link.settings.label.label",
-          "info": "t:sections.finder_sidebar.blocks.tag_link.settings.label.info"
+          "label": "t:sections.finder_sidebar.blocks.location_link.settings.label.label"
         },
         {
-          "type": "collection",
-          "id": "collection",
-          "label": "t:sections.finder_sidebar.blocks.tag_link.settings.collection.label",
-          "info": "t:sections.finder_sidebar.blocks.tag_link.settings.collection.info"
+          "type": "url",
+          "id": "url",
+          "label": "t:sections.finder_sidebar.blocks.location_link.settings.url.label",
+          "info": "t:sections.finder_sidebar.blocks.location_link.settings.url.info"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "t:sections.finder_sidebar.blocks.location_link.settings.icon.label",
+          "options": [
+            { "value": "bag", "label": "Bag" },
+            { "value": "folder", "label": "Folder" },
+            { "value": "file", "label": "File" },
+            { "value": "tag", "label": "Tag" },
+            { "value": "info", "label": "Info" }
+          ],
+          "default": "bag"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_cart_count",
+          "label": "t:sections.finder_sidebar.blocks.location_link.settings.show_cart_count.label",
+          "info": "t:sections.finder_sidebar.blocks.location_link.settings.show_cart_count.info",
+          "default": false
         }
       ]
     }

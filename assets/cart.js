@@ -26,20 +26,24 @@
   }
 
   function updateCartBadge(count) {
-    var icon = qs('[data-cart-icon]');
-    if (!icon) return;
-    var badge = qs('[data-cart-count]', icon);
-    if (count > 0) {
-      if (!badge) {
-        badge = document.createElement('span');
-        badge.className = 'icon-btn__badge';
-        badge.setAttribute('data-cart-count', '');
-        icon.appendChild(badge);
+    // Every place that shows a live Bag count (title bar, and optionally
+    // a sidebar "Locations" link) marks itself with these two attributes
+    // so they all stay in sync after an AJAX add/change, not just the
+    // one the server happened to render a badge into at page load.
+    document.querySelectorAll('[data-cart-count-container]').forEach(function (container) {
+      var badge = qs('[data-cart-count]', container);
+      if (count > 0) {
+        if (!badge) {
+          badge = document.createElement('span');
+          badge.className = container.getAttribute('data-cart-count-class') || '';
+          badge.setAttribute('data-cart-count', '');
+          container.appendChild(badge);
+        }
+        badge.textContent = count;
+      } else if (badge) {
+        badge.remove();
       }
-      badge.textContent = count;
-    } else if (badge) {
-      badge.remove();
-    }
+    });
   }
 
   function announce(message) {

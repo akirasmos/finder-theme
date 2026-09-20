@@ -55,7 +55,7 @@
       <span class="visually-hidden">{{ 'general.search.label' | t }}</span>
       {% render 'icon', name: 'search' %}
     </a>
-    <a href="{{ routes.cart_url }}" class="icon-btn" data-cart-icon>
+    <a href="{{ routes.cart_url }}" class="icon-btn" data-cart-icon data-cart-count-container data-cart-count-class="icon-btn__badge">
       <span class="visually-hidden">{{ 'general.cart.title' | t }}</span>
       {% render 'icon', name: 'bag' %}
       {%- if cart.item_count > 0 -%}

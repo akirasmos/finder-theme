@@ -49,8 +49,8 @@
         "favorites_heading": {
           "label": "Favorites heading"
         },
-        "tags_heading": {
-          "label": "Tags heading"
+        "locations_heading": {
+          "label": "Locations heading"
         }
       },
       "blocks": {
@@ -72,20 +72,22 @@
             }
           }
         },
-        "tag_link": {
-          "name": "Tag",
+        "location_link": {
+          "name": "Location",
           "settings": {
-            "tag": {
-              "label": "Product tag",
-              "info": "Exact tag value on your products, e.g. “new”"
-            },
             "label": {
-              "label": "Label",
-              "info": "Leave blank to use the tag value"
+              "label": "Label"
             },
-            "collection": {
-              "label": "Collection to filter",
-              "info": "Leave blank to filter across all products"
+            "url": {
+              "label": "Link",
+              "info": "An internal path (e.g. \/cart) or any URL"
+            },
+            "icon": {
+              "label": "Icon"
+            },
+            "show_cart_count": {
+              "label": "Show live Bag item count",
+              "info": "Only meaningful when this location points at the Bag"
             }
           }
         }

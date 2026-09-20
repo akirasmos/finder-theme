@@ -23,7 +23,7 @@
           "type": "finder-sidebar",
           "settings": {
             "favorites_heading": "Favorites",
-            "tags_heading": "Tags"
+            "locations_heading": "Locations"
           },
           "blocks": {
             "fav-tops": {
@@ -62,37 +62,13 @@
                 "show_count": true
               }
             },
-            "fav-sale": {
-              "type": "favorite_link",
+            "loc-bag": {
+              "type": "location_link",
               "settings": {
-                "collection": "sale",
-                "label": "",
-                "icon": "percent",
-                "show_count": true
-              }
-            },
-            "tag-new": {
-              "type": "tag_link",
-              "settings": {
-                "tag": "new",
-                "label": "New Arrivals",
-                "collection": ""
-              }
-            },
-            "tag-cotton": {
-              "type": "tag_link",
-              "settings": {
-                "tag": "cotton",
-                "label": "Cotton",
-                "collection": ""
-              }
-            },
-            "tag-water-resistant": {
-              "type": "tag_link",
-              "settings": {
-                "tag": "water-resistant",
-                "label": "Water-Resistant",
-                "collection": ""
+                "label": "Bag",
+                "url": "/cart",
+                "icon": "bag",
+                "show_cart_count": true
               }
             }
           },
@@ -101,10 +77,7 @@
             "fav-bottoms",
             "fav-outerwear",
             "fav-accessories",
-            "fav-sale",
-            "tag-new",
-            "tag-cotton",
-            "tag-water-resistant"
+            "loc-bag"
           ]
         },
         "finder-statusbar": {
