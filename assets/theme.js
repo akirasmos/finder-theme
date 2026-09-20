@@ -8,36 +8,6 @@
   var MOBILE_BREAKPOINT = 768;
 
   /* --------------------------------------------------------------------
-     Announcement bar dismiss (remembered for the browser session only)
-     -------------------------------------------------------------------- */
-  function initAnnouncementBar() {
-    var bar = document.querySelector('[data-announcement-bar]');
-    if (!bar) return;
-
-    var dismissed = false;
-    try {
-      dismissed = window.sessionStorage.getItem('sz-announcement-dismissed') === 'true';
-    } catch (e) {
-      /* ignore */
-    }
-    if (dismissed) {
-      bar.hidden = true;
-      return;
-    }
-
-    var dismissBtn = bar.querySelector('[data-announcement-dismiss]');
-    if (!dismissBtn) return;
-    dismissBtn.addEventListener('click', function () {
-      bar.hidden = true;
-      try {
-        window.sessionStorage.setItem('sz-announcement-dismissed', 'true');
-      } catch (e) {
-        /* ignore */
-      }
-    });
-  }
-
-  /* --------------------------------------------------------------------
      Footer drawer (slides up from the status bar's tagline/info control)
      -------------------------------------------------------------------- */
   function initFooterDrawer() {
@@ -203,7 +173,6 @@
     });
   }
 
-  initAnnouncementBar();
   initFooterDrawer();
   initSidebar();
   initViewToggle();

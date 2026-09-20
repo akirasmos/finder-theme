@@ -28,20 +28,25 @@
             {%- when 'photo' -%}
               {%- liquid
                 assign img = block.settings.image
-                assign filename = block.settings.caption | default: 'photo' | handleize | append: '.jpg'
+                assign placeholder_src = 'gallery-placeholder.svg' | asset_url
+                if img
+                  assign filename = block.settings.caption | default: 'photo' | handleize | append: '.jpg'
+                else
+                  assign filename = 'general.gallery.add_photo' | t
+                endif
               -%}
               <li class="file-tile" data-view-item {{ block.shopify_attributes }}>
-                <button
-                  type="button"
-                  class="file-tile__link"
-                  data-gallery-item
-                  data-gallery-type="image"
-                  data-gallery-src="{{ img | image_url: width: 1600 }}"
-                  data-gallery-alt="{{ img.alt | default: filename | escape }}"
-                  aria-haspopup="dialog"
-                >
-                  <span class="file-tile__icon-wrap">
-                    {%- if img -%}
+                {%- if img -%}
+                  <button
+                    type="button"
+                    class="file-tile__link"
+                    data-gallery-item
+                    data-gallery-type="image"
+                    data-gallery-src="{{ img | image_url: width: 1600 }}"
+                    data-gallery-alt="{{ img.alt | default: filename | escape }}"
+                    aria-haspopup="dialog"
+                  >
+                    <span class="file-tile__icon-wrap">
                       <img
                         class="file-tile__icon"
                         src="{{ img | image_url: width: 480 }}"
@@ -52,48 +57,65 @@
                         alt=""
                         loading="lazy"
                       >
-                    {%- else -%}
-                      <span class="file-tile__icon file-tile__icon--placeholder">{% render 'icon', name: 'image' %}</span>
-                    {%- endif -%}
-                  </span>
-                  <span class="file-tile__name">{{ filename }}</span>
-                </button>
+                    </span>
+                    <span class="file-tile__name">{{ filename }}</span>
+                  </button>
+                {%- else -%}
+                  <div class="file-tile__link">
+                    <span class="file-tile__icon-wrap">
+                      <img class="file-tile__icon" src="{{ placeholder_src }}" width="400" height="400" alt="" loading="lazy">
+                    </span>
+                    <span class="file-tile__name">{{ filename }}</span>
+                  </div>
+                {%- endif -%}
               </li>
             {%- when 'video' -%}
               {%- liquid
                 assign vid = block.settings.video
-                assign filename = block.settings.caption | default: 'video' | handleize | append: '.mp4'
+                assign placeholder_src = 'gallery-placeholder.svg' | asset_url
+                if vid
+                  assign filename = block.settings.caption | default: 'video' | handleize | append: '.mp4'
+                else
+                  assign filename = 'general.gallery.add_video' | t
+                endif
               -%}
               <li class="file-tile" data-view-item {{ block.shopify_attributes }}>
-                <button
-                  type="button"
-                  class="file-tile__link"
-                  data-gallery-item
-                  data-gallery-type="video"
-                  data-gallery-template="video-{{ block.id }}"
-                  aria-haspopup="dialog"
-                >
-                  <span class="file-tile__icon-wrap">
-                    {%- if vid.preview_image -%}
-                      <img
-                        class="file-tile__icon"
-                        src="{{ vid.preview_image | image_url: width: 480 }}"
-                        width="{{ vid.preview_image.width }}"
-                        height="{{ vid.preview_image.height }}"
-                        alt=""
-                        loading="lazy"
-                      >
-                    {%- else -%}
-                      <span class="file-tile__icon file-tile__icon--placeholder">{% render 'icon', name: 'image' %}</span>
-                    {%- endif -%}
-                    <span class="file-tile__play" aria-hidden="true">{% render 'icon', name: 'play' %}</span>
-                  </span>
-                  <span class="file-tile__name">{{ filename }}</span>
-                </button>
                 {%- if vid -%}
+                  <button
+                    type="button"
+                    class="file-tile__link"
+                    data-gallery-item
+                    data-gallery-type="video"
+                    data-gallery-template="video-{{ block.id }}"
+                    aria-haspopup="dialog"
+                  >
+                    <span class="file-tile__icon-wrap">
+                      {%- if vid.preview_image -%}
+                        <img
+                          class="file-tile__icon"
+                          src="{{ vid.preview_image | image_url: width: 480 }}"
+                          width="{{ vid.preview_image.width }}"
+                          height="{{ vid.preview_image.height }}"
+                          alt=""
+                          loading="lazy"
+                        >
+                      {%- else -%}
+                        <img class="file-tile__icon" src="{{ placeholder_src }}" width="400" height="400" alt="" loading="lazy">
+                      {%- endif -%}
+                      <span class="file-tile__play" aria-hidden="true">{% render 'icon', name: 'play' %}</span>
+                    </span>
+                    <span class="file-tile__name">{{ filename }}</span>
+                  </button>
                   <template data-gallery-template="video-{{ block.id }}">
                     {{ vid | video_tag: controls: true, class: 'lightbox__video' }}
                   </template>
+                {%- else -%}
+                  <div class="file-tile__link">
+                    <span class="file-tile__icon-wrap">
+                      <img class="file-tile__icon" src="{{ placeholder_src }}" width="400" height="400" alt="" loading="lazy">
+                    </span>
+                    <span class="file-tile__name">{{ filename }}</span>
+                  </div>
                 {%- endif -%}
               </li>
           {%- endcase -%}

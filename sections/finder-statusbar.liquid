@@ -1,14 +1,15 @@
 {% comment %}
-  Global status bar. Left side mirrors Finder's "N items" readout with a
-  real, computed count (updated live by main-collection.liquid's filter
-  JS via [data-status-count] once filters/sort change). Right side is a
-  merchant-editable tagline standing in for Finder's "GB available".
+  Global status bar. Left side mirrors Finder's "N items" readout with
+  a real, computed count. Right side is a merchant-editable tagline
+  standing in for Finder's "GB available".
 {% endcomment %}
 <footer class="finder-statusbar">
   <span data-status-count>
     {%- case template.name -%}
       {%- when 'collection' -%}
         {{ 'general.status.item_count' | t: count: collection.products_count }}
+      {%- when 'index' -%}
+        {{ 'general.status.item_count' | t: count: collections['all'].products_count }}
       {%- when 'search' -%}
         {%- if search.performed -%}
           {{ 'general.status.result_count' | t: count: search.results_count }}

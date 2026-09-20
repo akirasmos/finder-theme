@@ -6,7 +6,7 @@
 {%- liquid
   assign root_title = section.settings.window_title | default: 'standard.zip'
   assign is_listing = false
-  if template.name == 'collection' or template.name == 'search'
+  if template.name == 'collection' or template.name == 'search' or template.name == 'index'
     assign is_listing = true
   endif
   assign default_view = settings.default_view | default: 'icon'

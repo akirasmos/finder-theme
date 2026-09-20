@@ -57,7 +57,7 @@
               "type": "favorite_link",
               "settings": {
                 "collection": "accessories",
-                "label": "",
+                "label": "Accessories",
                 "icon": "folder",
                 "show_count": true
               }

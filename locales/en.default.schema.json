@@ -120,6 +120,15 @@
         }
       }
     },
+    "home_collection": {
+      "name": "All products (homepage)",
+      "settings": {
+        "products_per_page": {
+          "label": "Products per page",
+          "info": "Shopify renders at most 250 products per page; there is no page-number control, so higher values just mean more scrolling instead of another page."
+        }
+      }
+    },
     "hero": {
       "name": "Hero",
       "settings": {
@@ -183,21 +192,6 @@
               "label": "Link"
             }
           }
-        }
-      }
-    },
-    "announcement_bar": {
-      "name": "Announcement bar",
-      "settings": {
-        "message": {
-          "label": "Message",
-          "info": "Leave blank to hide the bar entirely (it's off by default)"
-        },
-        "link": {
-          "label": "Link"
-        },
-        "dismissible": {
-          "label": "Allow visitors to dismiss"
         }
       }
     },

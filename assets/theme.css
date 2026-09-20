@@ -198,46 +198,6 @@ h1, h2, h3, h4, h5, h6, p {
 }
 
 /* ==========================================================================
-   Announcement bar
-   ========================================================================== */
-.announcement-bar {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-3);
-  padding: var(--space-2) var(--space-8);
-  background: var(--color-accent);
-  color: var(--color-text-on-accent);
-  font-size: 12px;
-  font-weight: 600;
-  text-align: center;
-}
-
-.announcement-bar__message a {
-  text-decoration: underline;
-}
-
-.announcement-bar__dismiss {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  flex: 0 0 auto;
-  color: rgba(255, 255, 255, 0.85);
-}
-
-.announcement-bar__dismiss:hover {
-  color: #ffffff;
-}
-
-.announcement-bar__dismiss svg {
-  width: 10px;
-  height: 10px;
-}
-
-/* ==========================================================================
    The window
    No corner radius, no outer drop shadow: this is not a floating window
    over a desktop, it IS the page, edge to edge, at every breakpoint.
