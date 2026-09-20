@@ -156,10 +156,28 @@
       if (subtotalEl) subtotalEl.textContent = formatMoney(cart.total_price);
     }
 
+    function syncQuantityControls(itemEl, quantity) {
+      var input = qs('[data-cart-quantity-input]', itemEl);
+      var increaseBtn = qs('[data-cart-quantity-increase]', itemEl);
+      var note = qs('[data-cart-stock-note]', itemEl);
+      if (!input) return;
+      var max = input.getAttribute('max');
+      var atMax = max !== null && max !== '' && quantity >= parseInt(max, 10);
+      if (increaseBtn) increaseBtn.disabled = atMax;
+      if (note) note.hidden = !atMax;
+    }
+
     function refreshRow(itemEl, item) {
       if (!item) return;
+      var input = qs('[data-cart-quantity-input]', itemEl);
+      // The server is the source of truth for quantity: it silently caps
+      // an update at available inventory rather than erroring, so the
+      // input has to be corrected back to what actually landed in the
+      // cart whenever it differs from what was requested.
+      if (input) input.value = item.quantity;
       var priceEl = qs('[data-cart-item-price]', itemEl);
       if (priceEl) priceEl.textContent = formatMoney(item.final_line_price);
+      syncQuantityControls(itemEl, item.quantity);
     }
 
     function handleChange(itemEl, quantity) {
@@ -195,6 +213,11 @@
         });
     }
 
+    function getMax(input) {
+      var max = input.getAttribute('max');
+      return max === null || max === '' ? Infinity : parseInt(max, 10);
+    }
+
     form.addEventListener('click', function (event) {
       var decrease = event.target.closest('[data-cart-quantity-decrease]');
       var increase = event.target.closest('[data-cart-quantity-increase]');
@@ -210,12 +233,14 @@
       if (remove) {
         quantity = 0;
       } else if (increase) {
+        if (quantity >= getMax(input)) return;
         quantity += 1;
       } else if (decrease) {
         quantity = Math.max(0, quantity - 1);
       }
 
       input.value = quantity;
+      syncQuantityControls(itemEl, quantity);
       handleChange(itemEl, quantity);
     });
 
@@ -224,7 +249,15 @@
       if (!input) return;
       var itemEl = input.closest('[data-cart-item]');
       var quantity = Math.max(0, parseInt(input.value, 10) || 0);
+      quantity = Math.min(quantity, getMax(input));
+      input.value = quantity;
+      syncQuantityControls(itemEl, quantity);
       handleChange(itemEl, quantity);
+    });
+
+    Array.prototype.slice.call(form.querySelectorAll('[data-cart-item]')).forEach(function (itemEl) {
+      var input = qs('[data-cart-quantity-input]', itemEl);
+      if (input) syncQuantityControls(itemEl, parseInt(input.value, 10) || 0);
     });
   }
 

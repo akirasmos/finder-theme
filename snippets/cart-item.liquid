@@ -3,6 +3,11 @@
 {% endcomment %}
 {%- liquid
   assign filename = item.product.title | handleize | append: '.png'
+  assign quantity_tracked = false
+  if item.variant.inventory_management == 'shopify' and item.variant.inventory_policy == 'deny'
+    assign quantity_tracked = true
+    assign quantity_max = item.variant.inventory_quantity | at_least: 0
+  endif
 -%}
 <li class="bag-item" data-cart-item data-cart-item-key="{{ item.key }}">
   <a href="{{ item.url }}" class="bag-item__media" tabindex="-1" aria-hidden="true">
@@ -42,14 +47,22 @@
         name="updates[]"
         value="{{ item.quantity }}"
         min="0"
+        {% if quantity_tracked %}max="{{ quantity_max }}"{% endif %}
         aria-label="{{ 'products.product.quantity' | t }}: {{ filename }}"
         data-cart-quantity-input
         data-line="{{ line_index }}"
       >
-      <button type="button" class="quantity-input__button" data-cart-quantity-increase aria-label="{{ 'products.product.quantity_increase' | t }}">
+      <button
+        type="button"
+        class="quantity-input__button"
+        data-cart-quantity-increase
+        aria-label="{{ 'products.product.quantity_increase' | t }}"
+        {% if quantity_tracked and item.quantity >= quantity_max %}disabled{% endif %}
+      >
         {% render 'icon', name: 'plus' %}
       </button>
     </div>
+    <p class="bag-item__stock-note" data-cart-stock-note {% unless quantity_tracked and item.quantity >= quantity_max %}hidden{% endunless %}>{{ 'general.cart.max_in_stock' | t }}</p>
   </div>
 
   <div class="bag-item__price" data-cart-item-price>{{ item.final_line_price | money }}</div>

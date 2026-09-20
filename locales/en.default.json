@@ -42,7 +42,8 @@
       "taxes_note": "Taxes and shipping calculated at checkout.",
       "checkout": "Check Out",
       "remove": "Remove",
-      "unavailable": "Currently unavailable"
+      "unavailable": "Currently unavailable",
+      "max_in_stock": "Max in Stock"
     },
     "status": {
       "item_count": {
@@ -78,7 +79,7 @@
       "kind": "Kind",
       "kind_default": "Item",
       "price": "Price",
-      "restocked": "Restocked",
+      "created": "Created",
       "where": "Where",
       "availability": "Availability",
       "sold_out": "Sold Out",

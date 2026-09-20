@@ -5,7 +5,7 @@
 {% endcomment %}
 {%- liquid
   assign current_variant = product.selected_or_first_available_variant
-  assign restocked = product.updated_at | date: '%B %-d, %Y'
+  assign created = product.created_at | date: '%B %-d, %Y, %-I:%M %p'
   assign where_label = product.type | default: 'products.product.kind_default' | t
 -%}
 <div class="product-info-window" data-money-format="{{ shop.money_format | escape }}">
@@ -101,8 +101,8 @@
         </div>
 
         <div class="info-table__row">
-          <dt>{{ 'products.product.restocked' | t }}</dt>
-          <dd>{{ restocked }}</dd>
+          <dt>{{ 'products.product.created' | t }}</dt>
+          <dd>{{ created }}</dd>
         </div>
 
         <div class="info-table__row">
@@ -121,28 +121,8 @@
         </div>
 
         <div class="info-table__row info-table__row--action">
-          <dt class="visually-hidden">
-            <label for="ProductQuantity-{{ section.id }}">{{ 'products.product.quantity' | t }}</label>
-          </dt>
           <dd class="info-table__action">
-            <div class="quantity-input">
-              <button type="button" class="quantity-input__button" data-quantity-decrease aria-label="{{ 'products.product.quantity_decrease' | t }}">
-                {% render 'icon', name: 'minus' %}
-              </button>
-              <input
-                type="number"
-                name="quantity"
-                id="ProductQuantity-{{ section.id }}"
-                value="1"
-                min="1"
-                class="quantity-input__field"
-                data-quantity-input
-                inputmode="numeric"
-              >
-              <button type="button" class="quantity-input__button" data-quantity-increase aria-label="{{ 'products.product.quantity_increase' | t }}">
-                {% render 'icon', name: 'plus' %}
-              </button>
-            </div>
+            <input type="hidden" name="quantity" value="1">
             <input type="hidden" name="id" value="{{ current_variant.id }}" data-product-variant-id>
             <button
               type="submit"

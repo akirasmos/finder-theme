@@ -143,20 +143,6 @@
 
   updateOptionAvailability();
 
-  /* Quantity stepper */
-  var quantityInput = document.querySelector('[data-quantity-input]');
-  var decreaseBtn = document.querySelector('[data-quantity-decrease]');
-  var increaseBtn = document.querySelector('[data-quantity-increase]');
-
-  function nudgeQuantity(delta) {
-    if (!quantityInput) return;
-    var value = Math.max(1, (parseInt(quantityInput.value, 10) || 1) + delta);
-    quantityInput.value = value;
-  }
-
-  if (decreaseBtn) decreaseBtn.addEventListener('click', function () { nudgeQuantity(-1); });
-  if (increaseBtn) increaseBtn.addEventListener('click', function () { nudgeQuantity(1); });
-
   /* Thumbnail gallery */
   var thumbs = document.querySelectorAll('[data-product-thumb]');
   thumbs.forEach(function (thumb) {

@@ -1492,6 +1492,23 @@ h1, h2, h3, h4, h5, h6, p {
   height: 30px;
 }
 
+.quantity-input__button:disabled {
+  color: var(--color-text-tertiary);
+  cursor: default;
+}
+
+.quantity-input__button:disabled:hover {
+  background: none;
+}
+
+.bag-item__stock-note {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-text-tertiary);
+  text-align: center;
+  margin-top: var(--space-1);
+}
+
 .quantity-input--sm .quantity-input__button {
   width: 28px;
 }
