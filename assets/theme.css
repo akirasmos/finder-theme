@@ -71,7 +71,6 @@
   --tl-yellow-border: #dea123;
   --tl-green: #28c840;
   --tl-green-border: #1aab29;
-  --tl-glyph: rgba(0, 0, 0, 0.55);
 
   color-scheme: light;
 }
@@ -216,6 +215,21 @@ h1, h2, h3, h4, h5, h6, p {
   width: 100%;
   background: var(--color-content-bg);
   position: relative;
+  transition: grid-template-columns 0.2s ease;
+}
+
+/* Desktop sidebar collapse, toggled by the titlebar sidebar button. On
+   mobile the same button instead opens the sidebar as an overlay sheet
+   (see the max-width: 767px block below), so this only applies at
+   viewports where the sidebar is a persistent grid column. */
+@media (min-width: 768px) {
+  .finder-window.sidebar-collapsed {
+    grid-template-columns: 0 1fr;
+  }
+
+  .finder-window.sidebar-collapsed .finder-sidebar {
+    display: none;
+  }
 }
 
 /* Shopify's section wrapper divs sit between .finder-window and our chrome
@@ -262,7 +276,7 @@ h1, h2, h3, h4, h5, h6, p {
 }
 
 .finder-titlebar__sidebar-toggle {
-  display: none;
+  display: inline-flex;
   margin-left: var(--space-2);
   -webkit-app-region: no-drag;
 }
@@ -322,10 +336,10 @@ h1, h2, h3, h4, h5, h6, p {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  /* Asymmetric: clears the traffic lights on the left and the
-     search/bag icons on the right, each with a small safety gap,
-     rather than a symmetric guess that can overlap the controls. */
-  padding-left: 80px;
+  /* Asymmetric: clears the traffic lights + sidebar toggle on the left
+     and the search/bag icons on the right, each with a small safety
+     gap, rather than a symmetric guess that can overlap the controls. */
+  padding-left: 116px;
   padding-right: 96px;
   pointer-events: none;
 }
@@ -368,12 +382,8 @@ h1, h2, h3, h4, h5, h6, p {
   height: 12px;
   border-radius: 50%;
   padding: 0;
-  transition: transform 0.1s ease, filter 0.1s ease;
-}
-
-.traffic-lights__button:active {
-  transform: scale(0.9);
-  filter: brightness(0.92);
+  cursor: default;
+  pointer-events: none;
 }
 
 .traffic-lights__button--close {
@@ -389,29 +399,6 @@ h1, h2, h3, h4, h5, h6, p {
 .traffic-lights__button--zoom {
   background: var(--tl-green);
   box-shadow: inset 0 0 0 0.5px var(--tl-green-border);
-}
-
-.traffic-lights__glyph {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity 0.1s ease;
-}
-
-.traffic-lights__glyph svg {
-  width: 100%;
-  height: 100%;
-}
-
-.traffic-lights__glyph path,
-.traffic-lights__glyph line {
-  stroke: var(--tl-glyph);
-}
-
-@media (hover: hover) {
-  .traffic-lights:hover .traffic-lights__glyph {
-    opacity: 1;
-  }
 }
 
 /* ==========================================================================
@@ -497,7 +484,6 @@ h1, h2, h3, h4, h5, h6, p {
   grid-area: breadcrumb;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   height: var(--breadcrumb-height);
   background: var(--color-breadcrumb-bg);
   border-bottom: 1px solid var(--color-border);
@@ -517,13 +503,6 @@ h1, h2, h3, h4, h5, h6, p {
 
 .finder-breadcrumb__list::-webkit-scrollbar {
   display: none;
-}
-
-.finder-breadcrumb__extra {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
 }
 
 .finder-breadcrumb__item {
@@ -597,40 +576,6 @@ h1, h2, h3, h4, h5, h6, p {
 .finder-statusbar__tagline svg {
   width: 12px;
   height: 12px;
-}
-
-.view-toggle {
-  display: flex;
-  align-items: center;
-  gap: 1px;
-  background: rgba(0, 0, 0, 0.05);
-  border-radius: var(--radius-sm);
-  padding: 2px;
-}
-
-.view-toggle button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 26px;
-  height: 24px;
-  border-radius: var(--radius-sm);
-  color: var(--color-text-tertiary);
-}
-
-.view-toggle button:hover {
-  color: var(--color-text);
-}
-
-.view-toggle button svg {
-  width: 13px;
-  height: 13px;
-}
-
-.view-toggle button[aria-pressed="true"] {
-  background: var(--color-overlay-bg);
-  color: var(--color-text);
-  box-shadow: var(--shadow-sm);
 }
 
 /* ==========================================================================
@@ -727,13 +672,7 @@ h1, h2, h3, h4, h5, h6, p {
     grid-template-columns: 1fr;
   }
 
-  .finder-titlebar__sidebar-toggle {
-    display: inline-flex;
-  }
-
   .finder-titlebar__title {
-    padding-left: 116px;
-    padding-right: 96px;
     font-size: 12px;
   }
 
@@ -908,16 +847,7 @@ h1, h2, h3, h4, h5, h6, p {
   word-break: break-word;
 }
 
-.file-tile__row {
-  display: block;
-}
-
-.file-tile__cell--color,
-.file-tile__cell--size {
-  display: none;
-}
-
-.file-tile__cell--price {
+.file-tile__price {
   font-size: 11px;
   color: var(--color-text-tertiary);
 }
@@ -931,109 +861,6 @@ h1, h2, h3, h4, h5, h6, p {
   text-decoration: line-through;
   color: var(--color-text-tertiary);
   margin-left: var(--space-1);
-}
-
-.file-list__header {
-  display: none;
-}
-
-/* List view */
-.file-browser[data-view="list"] {
-  --file-row-cols: 32px minmax(0, 1fr) 96px 120px 140px;
-}
-
-.file-browser[data-view="list"] .file-list__header {
-  display: grid;
-  grid-template-columns: var(--file-row-cols);
-  align-items: center;
-  gap: var(--space-3);
-  height: 30px;
-  padding: 0 var(--space-6);
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--color-text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.file-browser[data-view="list"] .file-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  padding: 0;
-}
-
-.file-browser[data-view="list"] .file-tile__link {
-  display: grid;
-  grid-template-columns: var(--file-row-cols);
-  align-items: center;
-  gap: var(--space-3);
-  height: 44px;
-  padding: 0 var(--space-6);
-  border-radius: 0;
-  border-bottom: 1px solid var(--color-border);
-  text-align: left;
-}
-
-.file-browser[data-view="list"] .file-tile__icon-wrap {
-  width: 24px;
-  height: 24px;
-  max-width: 24px;
-}
-
-.file-browser[data-view="list"] .file-tile__name {
-  -webkit-line-clamp: 1;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.file-browser[data-view="list"] .file-tile__row {
-  display: contents;
-}
-
-.file-browser[data-view="list"] .file-tile__cell {
-  font-size: 12px;
-  color: var(--color-text-secondary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.file-browser[data-view="list"] .file-tile__cell--color,
-.file-browser[data-view="list"] .file-tile__cell--size {
-  display: block;
-}
-
-/* Below tablet width, five columns leaves no room for the name itself —
-   drop to icon/name/price and let color/size stay discoverable on the
-   product page rather than squeezing every column unreadably thin. */
-@media (max-width: 767px) {
-  .file-browser[data-view="list"] {
-    --file-row-cols: 28px minmax(0, 1fr) 72px;
-  }
-
-  .file-browser[data-view="list"] .file-list__col--color,
-  .file-browser[data-view="list"] .file-list__col--size,
-  .file-browser[data-view="list"] .file-tile__cell--color,
-  .file-browser[data-view="list"] .file-tile__cell--size {
-    display: none;
-  }
-
-  .file-browser[data-view="list"] .file-tile__link {
-    padding: 0 var(--space-4);
-  }
-
-  .file-browser[data-view="list"] .file-list__header {
-    padding: 0 var(--space-4);
-  }
-
-  /* The 72px price column has no room for both the sale price and the
-     struck-through compare-at price — the red color plus the sale dot
-     on the icon already signal "on sale" without it. */
-  .file-browser[data-view="list"] .price__compare-at {
-    display: none;
-  }
 }
 
 /* ==========================================================================

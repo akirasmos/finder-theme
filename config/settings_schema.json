@@ -40,21 +40,6 @@
     ]
   },
   {
-    "name": "t:settings_schema.layout.name",
-    "settings": [
-      {
-        "type": "select",
-        "id": "default_view",
-        "label": "t:settings_schema.layout.default_view.label",
-        "options": [
-          { "value": "icon", "label": "t:settings_schema.layout.default_view.options.icon" },
-          { "value": "list", "label": "t:settings_schema.layout.default_view.options.list" }
-        ],
-        "default": "icon"
-      }
-    ]
-  },
-  {
     "name": "t:settings_schema.favicon.name",
     "settings": [
       {

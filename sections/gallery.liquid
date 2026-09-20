@@ -21,7 +21,7 @@
     -%}
     {% render 'empty-state', icon: 'image', title: empty_title, description: empty_description %}
   {%- else -%}
-    <div class="file-browser" data-view="icon">
+    <div class="file-browser">
       <ul class="file-grid" role="list">
         {%- for block in section.blocks -%}
           {%- case block.type -%}
@@ -35,7 +35,7 @@
                   assign filename = 'general.gallery.add_photo' | t
                 endif
               -%}
-              <li class="file-tile" data-view-item {{ block.shopify_attributes }}>
+              <li class="file-tile" {{ block.shopify_attributes }}>
                 {%- if img -%}
                   <button
                     type="button"
@@ -79,7 +79,7 @@
                   assign filename = 'general.gallery.add_video' | t
                 endif
               -%}
-              <li class="file-tile" data-view-item {{ block.shopify_attributes }}>
+              <li class="file-tile" {{ block.shopify_attributes }}>
                 {%- if vid -%}
                   <button
                     type="button"

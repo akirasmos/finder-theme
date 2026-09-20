@@ -50,51 +50,70 @@
   }
 
   /* --------------------------------------------------------------------
-     Mobile sidebar sheet
+     Sidebar toggle. The same button collapses/expands the persistent
+     sidebar column on desktop, and shows/hides it as an overlay sheet
+     on mobile (where there's no room for it alongside content).
      -------------------------------------------------------------------- */
   function initSidebar() {
     var sidebar = document.getElementById('FinderSidebar');
     var backdrop = document.querySelector('[data-sidebar-backdrop]');
     var toggles = document.querySelectorAll('[data-sidebar-toggle]');
-    if (!sidebar || !backdrop || !toggles.length) return;
+    var finderWindow = document.getElementById('FinderWindow');
+    if (!sidebar || !backdrop || !toggles.length || !finderWindow) return;
 
     var lastFocused = null;
 
-    function isOpen() {
+    function isMobile() {
+      return window.innerWidth < MOBILE_BREAKPOINT;
+    }
+
+    function isMobileOpen() {
       return sidebar.classList.contains('is-open');
     }
 
-    function open() {
+    function isDesktopCollapsed() {
+      return finderWindow.classList.contains('sidebar-collapsed');
+    }
+
+    function syncAriaExpanded() {
+      var expanded = isMobile() ? isMobileOpen() : !isDesktopCollapsed();
+      toggles.forEach(function (btn) {
+        btn.setAttribute('aria-expanded', String(expanded));
+      });
+    }
+
+    function openMobile() {
       lastFocused = document.activeElement;
       sidebar.classList.add('is-open');
       backdrop.classList.add('is-visible');
       backdrop.hidden = false;
-      toggles.forEach(function (btn) {
-        btn.setAttribute('aria-expanded', 'true');
-      });
+      syncAriaExpanded();
       document.body.style.overflow = 'hidden';
       var firstLink = sidebar.querySelector('a, button');
       if (firstLink) firstLink.focus();
       document.addEventListener('keydown', onKeydown);
     }
 
-    function close() {
+    function closeMobile() {
       sidebar.classList.remove('is-open');
       backdrop.classList.remove('is-visible');
-      toggles.forEach(function (btn) {
-        btn.setAttribute('aria-expanded', 'false');
-      });
+      syncAriaExpanded();
       document.body.style.overflow = '';
       document.removeEventListener('keydown', onKeydown);
       window.setTimeout(function () {
-        if (!isOpen()) backdrop.hidden = true;
+        if (!isMobileOpen()) backdrop.hidden = true;
       }, 250);
       if (lastFocused) lastFocused.focus();
     }
 
+    function toggleDesktop() {
+      finderWindow.classList.toggle('sidebar-collapsed');
+      syncAriaExpanded();
+    }
+
     function onKeydown(event) {
       if (event.key === 'Escape') {
-        close();
+        closeMobile();
         return;
       }
       if (event.key === 'Tab') {
@@ -116,64 +135,30 @@
       }
     }
 
+    syncAriaExpanded();
+
     toggles.forEach(function (btn) {
-      btn.setAttribute('aria-expanded', 'false');
       btn.addEventListener('click', function () {
-        isOpen() ? close() : open();
+        if (isMobile()) {
+          isMobileOpen() ? closeMobile() : openMobile();
+        } else {
+          toggleDesktop();
+        }
       });
     });
 
-    backdrop.addEventListener('click', close);
+    backdrop.addEventListener('click', closeMobile);
 
     sidebar.addEventListener('click', function (event) {
-      if (event.target.closest('a')) close();
+      if (isMobile() && isMobileOpen() && event.target.closest('a')) closeMobile();
     });
 
     window.addEventListener('resize', function () {
-      if (window.innerWidth >= MOBILE_BREAKPOINT && isOpen()) close();
-    });
-  }
-
-  /* --------------------------------------------------------------------
-     Grid / list view toggle (persisted per-browser via localStorage).
-     Applied immediately (this script runs deferred, so the DOM carrying
-     the server-rendered default view already exists) to avoid a flash
-     of the wrong view when a returning visitor's stored choice differs.
-     -------------------------------------------------------------------- */
-  function setView(view) {
-    document.querySelectorAll('[data-view-target]').forEach(function (el) {
-      el.setAttribute('data-view', view);
-    });
-    document.querySelectorAll('[data-view-toggle]').forEach(function (btn) {
-      btn.setAttribute('aria-pressed', String(btn.getAttribute('data-view-toggle') === view));
-    });
-    try {
-      window.localStorage.setItem('sz-view', view);
-    } catch (e) {
-      /* storage unavailable (private mode, blocked) — view just won't persist */
-    }
-  }
-
-  function initViewToggle() {
-    var buttons = document.querySelectorAll('[data-view-toggle]');
-    if (!buttons.length) return;
-
-    var stored = null;
-    try {
-      stored = window.localStorage.getItem('sz-view');
-    } catch (e) {
-      /* ignore */
-    }
-    if (stored) setView(stored);
-
-    buttons.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        setView(btn.getAttribute('data-view-toggle'));
-      });
+      if (!isMobile() && isMobileOpen()) closeMobile();
+      syncAriaExpanded();
     });
   }
 
   initFooterDrawer();
   initSidebar();
-  initViewToggle();
 })();

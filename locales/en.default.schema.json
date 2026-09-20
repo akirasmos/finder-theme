@@ -15,16 +15,6 @@
         "info": "Used for the sidebar, path bar, and status bar. The title bar is automatically a touch darker for depth."
       }
     },
-    "layout": {
-      "name": "Layout",
-      "default_view": {
-        "label": "Default product view",
-        "options": {
-          "icon": "Icon view",
-          "list": "List view"
-        }
-      }
-    },
     "favicon": {
       "name": "Favicon",
       "favicon": {

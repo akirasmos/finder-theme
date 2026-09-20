@@ -29,11 +29,6 @@
       "view_all": "View all results for “{{ query }}”",
       "prompt_title": "Search standard.zip"
     },
-    "view": {
-      "toggle_label": "View as",
-      "icon_view": "Icon view",
-      "list_view": "List view"
-    },
     "cart": {
       "title": "Bag",
       "move_to_bag": "Move to Bag",
@@ -75,12 +70,9 @@
     },
     "collection": {
       "empty_title": "This folder is empty",
-      "empty_description": "No items match your filters right now.",
+      "empty_description": "There's nothing in this folder yet.",
       "empty_action": "View All Products",
-      "column_name": "Name",
-      "column_price": "Price",
-      "column_color": "Color",
-      "column_size": "Size"
+      "column_name": "Name"
     },
     "product": {
       "kind": "Kind",

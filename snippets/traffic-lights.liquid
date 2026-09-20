@@ -1,24 +1,12 @@
 {% comment %}
-  Decorative window controls. Real DOM elements with authentic macOS
-  hover/active states (handled purely in CSS via :active — no click
-  handler is attached), but intentionally non-functional: nothing here
-  closes, minimizes, or navigates anything. aria-hidden and tabindex="-1"
-  because there is nothing for assistive tech or keyboard users to act on.
+  Purely decorative window controls. Real DOM elements with the authentic
+  macOS red/yellow/green dots, but intentionally non-interactive: no hover
+  or press feedback, nothing closes, minimizes, or navigates anything.
+  aria-hidden and tabindex="-1" because there is nothing for assistive
+  tech or keyboard users to act on.
 {% endcomment %}
 <div class="traffic-lights" aria-hidden="true">
-  <button type="button" class="traffic-lights__button traffic-lights__button--close" tabindex="-1">
-    <span class="traffic-lights__glyph">
-      <svg viewBox="0 0 12 12" fill="none"><path d="M3.5 3.5l5 5m0-5l-5 5" stroke-width="1.1" stroke-linecap="round"/></svg>
-    </span>
-  </button>
-  <button type="button" class="traffic-lights__button traffic-lights__button--minimize" tabindex="-1">
-    <span class="traffic-lights__glyph">
-      <svg viewBox="0 0 12 12" fill="none"><line x1="3" y1="6" x2="9" y2="6" stroke-width="1.1" stroke-linecap="round"/></svg>
-    </span>
-  </button>
-  <button type="button" class="traffic-lights__button traffic-lights__button--zoom" tabindex="-1">
-    <span class="traffic-lights__glyph">
-      <svg viewBox="0 0 12 12" fill="none"><path d="M3 6.5V9h2.5M9 5.5V3H6.5M3 9l2.7-2.7M9 3L6.3 5.7" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </span>
-  </button>
+  <button type="button" class="traffic-lights__button traffic-lights__button--close" tabindex="-1"></button>
+  <button type="button" class="traffic-lights__button traffic-lights__button--minimize" tabindex="-1"></button>
+  <button type="button" class="traffic-lights__button traffic-lights__button--zoom" tabindex="-1"></button>
 </div>

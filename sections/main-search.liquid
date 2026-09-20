@@ -1,8 +1,8 @@
 {% comment %}
   Search results main content — scoped to products so results stay
-  shaped for the file-icon grid (price/color/size). No filter UI and
-  no numbered pagination by design — results show up to Shopify's own
-  250-per-page platform limit and simply scroll vertically.
+  shaped for the file-icon grid. No filter UI and no numbered
+  pagination by design — results show up to Shopify's own 250-per-page
+  platform limit and simply scroll vertically.
 {% endcomment %}
 <div class="collection-main">
   {%- paginate search.results by section.settings.products_per_page -%}
@@ -18,14 +18,7 @@
       -%}
       {% render 'empty-state', icon: 'search', title: empty_title, description: empty_description %}
     {%- else -%}
-      <div class="file-browser" data-view-target data-view="{{ settings.default_view | default: 'icon' }}">
-        <div class="file-list__header" data-view-header aria-hidden="true">
-          <span class="file-list__col--icon"></span>
-          <span class="file-list__col--name">{{ 'products.collection.column_name' | t }}</span>
-          <span class="file-list__col--price">{{ 'products.collection.column_price' | t }}</span>
-          <span class="file-list__col--color">{{ 'products.collection.column_color' | t }}</span>
-          <span class="file-list__col--size">{{ 'products.collection.column_size' | t }}</span>
-        </div>
+      <div class="file-browser">
         <ul class="file-grid" role="list">
           {%- for item in search.results -%}
             {%- if item.object_type == 'product' -%}

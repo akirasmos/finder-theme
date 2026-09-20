@@ -1,15 +1,9 @@
 {% comment %}
   Global path bar: a real, clickable breadcrumb trail (not a title-bar
-  echo). On listing templates it also carries the grid/list view switch,
-  mirroring Finder's toolbar view segmented control.
+  echo).
 {% endcomment %}
 {%- liquid
   assign root_title = section.settings.window_title | default: 'standard.zip'
-  assign is_listing = false
-  if template.name == 'collection' or template.name == 'search' or template.name == 'index'
-    assign is_listing = true
-  endif
-  assign default_view = settings.default_view | default: 'icon'
 -%}
 <div class="finder-breadcrumb">
   <ol class="finder-breadcrumb__list">
@@ -65,21 +59,6 @@
         </li>
     {%- endcase -%}
   </ol>
-
-  {%- if is_listing -%}
-    <div class="finder-breadcrumb__extra">
-      <div class="view-toggle" role="group" aria-label="{{ 'general.view.toggle_label' | t }}">
-        <button type="button" data-view-toggle="icon" aria-pressed="{% if default_view == 'icon' %}true{% else %}false{% endif %}">
-          {% render 'icon', name: 'grid' %}
-          <span class="visually-hidden">{{ 'general.view.icon_view' | t }}</span>
-        </button>
-        <button type="button" data-view-toggle="list" aria-pressed="{% if default_view == 'list' %}true{% else %}false{% endif %}">
-          {% render 'icon', name: 'list' %}
-          <span class="visually-hidden">{{ 'general.view.list_view' | t }}</span>
-        </button>
-      </div>
-    </div>
-  {%- endif -%}
 </div>
 
 {% schema %}

@@ -5,7 +5,6 @@
       "color_accent": "#0850c7",
       "color_content_bg": "#ffffff",
       "color_chrome_bg": "#f6f6f7",
-      "default_view": "icon",
       "sections": {
         "finder-titlebar": {
           "type": "finder-titlebar",

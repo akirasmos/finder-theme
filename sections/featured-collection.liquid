@@ -14,7 +14,7 @@
   </div>
 
   {%- if section.settings.collection -%}
-    <div class="file-browser" data-view="icon">
+    <div class="file-browser">
       <ul class="file-grid" role="list">
         {%- for product in section.settings.collection.products limit: section.settings.products_to_show -%}
           {% render 'product-file-icon', product: product %}

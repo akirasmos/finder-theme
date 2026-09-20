@@ -1,8 +1,5 @@
 {% comment %}
-  Shared product tile. One piece of markup renders as an icon-view "file"
-  card or reflows into a list-view row purely via CSS on the ancestor
-  [data-view] — never re-rendered by JS, so switching views is instant
-  and correct even with JS disabled (server renders the default view).
+  Shared product tile — an icon-view "file" card (filename + price).
   Usage: {% render 'product-file-icon', product: product %}
 {% endcomment %}
 {%- liquid
@@ -12,16 +9,8 @@
   if product.compare_at_price_min > product.price_min
     assign on_sale = true
   endif
-
-  assign color_option = product.options_with_values | where: 'name', 'Color'
-  if color_option == empty
-    assign color_option = product.options_with_values | where: 'name', 'Colour'
-  endif
-  assign size_option = product.options_with_values | where: 'name', 'Size'
-  assign color_text = color_option.first.values | join: ', '
-  assign size_text = size_option.first.values | join: ', '
 -%}
-<li class="file-tile{% unless product.available %} file-tile--unavailable{% endunless %}" data-view-item>
+<li class="file-tile{% unless product.available %} file-tile--unavailable{% endunless %}">
   <a href="{{ product.url }}" class="file-tile__link">
     <span class="file-tile__icon-wrap">
       {%- if img -%}
@@ -53,15 +42,6 @@
     </span>
 
     <span class="file-tile__name">{{ filename }}</span>
-
-    <span class="file-tile__row">
-      <span class="file-tile__cell file-tile__cell--price">{% render 'price', product: product %}</span>
-      <span class="file-tile__cell file-tile__cell--color">
-        <span class="visually-hidden">{{ 'products.collection.column_color' | t }}: </span>{{ color_text | default: '—' }}
-      </span>
-      <span class="file-tile__cell file-tile__cell--size">
-        <span class="visually-hidden">{{ 'products.collection.column_size' | t }}: </span>{{ size_text | default: '—' }}
-      </span>
-    </span>
+    <span class="file-tile__price">{% render 'price', product: product %}</span>
   </a>
 </li>
