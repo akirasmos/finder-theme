@@ -12,6 +12,11 @@
       "favorites": "Favorites",
       "toggle": "Show sidebar"
     },
+    "gallery": {
+      "empty_title": "This folder is empty",
+      "empty_description": "Add photos or videos to this gallery in the theme editor.",
+      "viewer_label": "Media viewer"
+    },
     "search": {
       "label": "Search",
       "title": "Search",

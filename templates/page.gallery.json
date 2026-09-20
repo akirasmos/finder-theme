@@ -1,0 +1,38 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-page"
+    },
+    "gallery": {
+      "type": "gallery",
+      "blocks": {
+        "photo-1": {
+          "type": "photo",
+          "settings": {
+            "caption": ""
+          }
+        },
+        "photo-2": {
+          "type": "photo",
+          "settings": {
+            "caption": ""
+          }
+        },
+        "photo-3": {
+          "type": "photo",
+          "settings": {
+            "caption": ""
+          }
+        },
+        "photo-4": {
+          "type": "photo",
+          "settings": {
+            "caption": ""
+          }
+        }
+      },
+      "block_order": ["photo-1", "photo-2", "photo-3", "photo-4"]
+    }
+  },
+  "order": ["main", "gallery"]
+}

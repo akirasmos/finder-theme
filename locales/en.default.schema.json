@@ -190,7 +190,8 @@
       "name": "Announcement bar",
       "settings": {
         "message": {
-          "label": "Message"
+          "label": "Message",
+          "info": "Leave blank to hide the bar entirely (it's off by default)"
         },
         "link": {
           "label": "Link"
@@ -206,6 +207,35 @@
         "products_per_page": {
           "label": "Products per page",
           "info": "Shopify renders at most 250 results per page; there is no page-number control, so higher values just mean more scrolling instead of another page."
+        }
+      }
+    },
+    "gallery": {
+      "name": "Gallery",
+      "blocks": {
+        "photo": {
+          "name": "Photo",
+          "settings": {
+            "image": {
+              "label": "Image"
+            },
+            "caption": {
+              "label": "Caption",
+              "info": "Used as the filename shown under the thumbnail; leave blank for a generic one"
+            }
+          }
+        },
+        "video": {
+          "name": "Video",
+          "settings": {
+            "video": {
+              "label": "Video"
+            },
+            "caption": {
+              "label": "Caption",
+              "info": "Used as the filename shown under the thumbnail; leave blank for a generic one"
+            }
+          }
         }
       }
     },

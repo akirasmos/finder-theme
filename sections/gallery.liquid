@@ -1,0 +1,163 @@
+{% comment %}
+  Photo/video gallery — reuses the exact same file-icon grid as the
+  product listings (a gallery item is still just a "file" in this
+  theme's world), so it automatically gets the same responsive
+  columns, hover/focus states, and vertical scroll. Clicking a tile
+  opens a lightbox to view the full photo or play the video.
+{% endcomment %}
+{%- liquid
+  assign has_media = false
+  for block in section.blocks
+    if block.type == 'photo' or block.type == 'video'
+      assign has_media = true
+    endif
+  endfor
+-%}
+<div class="collection-main">
+  {%- if has_media == false -%}
+    {%- liquid
+      assign empty_title = 'general.gallery.empty_title' | t
+      assign empty_description = 'general.gallery.empty_description' | t
+    -%}
+    {% render 'empty-state', icon: 'image', title: empty_title, description: empty_description %}
+  {%- else -%}
+    <div class="file-browser" data-view="icon">
+      <ul class="file-grid" role="list">
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            {%- when 'photo' -%}
+              {%- liquid
+                assign img = block.settings.image
+                assign filename = block.settings.caption | default: 'photo' | handleize | append: '.jpg'
+              -%}
+              <li class="file-tile" data-view-item {{ block.shopify_attributes }}>
+                <button
+                  type="button"
+                  class="file-tile__link"
+                  data-gallery-item
+                  data-gallery-type="image"
+                  data-gallery-src="{{ img | image_url: width: 1600 }}"
+                  data-gallery-alt="{{ img.alt | default: filename | escape }}"
+                  aria-haspopup="dialog"
+                >
+                  <span class="file-tile__icon-wrap">
+                    {%- if img -%}
+                      <img
+                        class="file-tile__icon"
+                        src="{{ img | image_url: width: 480 }}"
+                        srcset="{{ img | image_url: width: 320 }} 320w, {{ img | image_url: width: 480 }} 480w, {{ img | image_url: width: 640 }} 640w"
+                        sizes="(max-width: 480px) 40vw, (max-width: 1023px) 28vw, 220px"
+                        width="{{ img.width }}"
+                        height="{{ img.height }}"
+                        alt=""
+                        loading="lazy"
+                      >
+                    {%- else -%}
+                      <span class="file-tile__icon file-tile__icon--placeholder">{% render 'icon', name: 'image' %}</span>
+                    {%- endif -%}
+                  </span>
+                  <span class="file-tile__name">{{ filename }}</span>
+                </button>
+              </li>
+            {%- when 'video' -%}
+              {%- liquid
+                assign vid = block.settings.video
+                assign filename = block.settings.caption | default: 'video' | handleize | append: '.mp4'
+              -%}
+              <li class="file-tile" data-view-item {{ block.shopify_attributes }}>
+                <button
+                  type="button"
+                  class="file-tile__link"
+                  data-gallery-item
+                  data-gallery-type="video"
+                  data-gallery-template="video-{{ block.id }}"
+                  aria-haspopup="dialog"
+                >
+                  <span class="file-tile__icon-wrap">
+                    {%- if vid.preview_image -%}
+                      <img
+                        class="file-tile__icon"
+                        src="{{ vid.preview_image | image_url: width: 480 }}"
+                        width="{{ vid.preview_image.width }}"
+                        height="{{ vid.preview_image.height }}"
+                        alt=""
+                        loading="lazy"
+                      >
+                    {%- else -%}
+                      <span class="file-tile__icon file-tile__icon--placeholder">{% render 'icon', name: 'image' %}</span>
+                    {%- endif -%}
+                    <span class="file-tile__play" aria-hidden="true">{% render 'icon', name: 'play' %}</span>
+                  </span>
+                  <span class="file-tile__name">{{ filename }}</span>
+                </button>
+                {%- if vid -%}
+                  <template data-gallery-template="video-{{ block.id }}">
+                    {{ vid | video_tag: controls: true, class: 'lightbox__video' }}
+                  </template>
+                {%- endif -%}
+              </li>
+          {%- endcase -%}
+        {%- endfor -%}
+      </ul>
+    </div>
+  {%- endif -%}
+</div>
+
+<div class="lightbox" data-lightbox hidden>
+  <div class="lightbox__backdrop" data-lightbox-backdrop></div>
+  <div class="lightbox__panel" role="dialog" aria-modal="true" aria-label="{{ 'general.gallery.viewer_label' | t }}">
+    <button type="button" class="lightbox__close icon-btn" data-lightbox-close aria-label="{{ 'general.accessibility.close' | t }}">
+      {% render 'icon', name: 'close' %}
+    </button>
+    <div class="lightbox__content" data-lightbox-content></div>
+  </div>
+</div>
+
+<script src="{{ 'gallery.js' | asset_url }}" defer="defer"></script>
+
+{% schema %}
+{
+  "name": "t:sections.gallery.name",
+  "blocks": [
+    {
+      "type": "photo",
+      "name": "t:sections.gallery.blocks.photo.name",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:sections.gallery.blocks.photo.settings.image.label"
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "t:sections.gallery.blocks.photo.settings.caption.label",
+          "info": "t:sections.gallery.blocks.photo.settings.caption.info"
+        }
+      ]
+    },
+    {
+      "type": "video",
+      "name": "t:sections.gallery.blocks.video.name",
+      "settings": [
+        {
+          "type": "video",
+          "id": "video",
+          "label": "t:sections.gallery.blocks.video.settings.video.label"
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "t:sections.gallery.blocks.video.settings.caption.label",
+          "info": "t:sections.gallery.blocks.video.settings.caption.info"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.gallery.name"
+    }
+  ]
+}
+{% endschema %}
