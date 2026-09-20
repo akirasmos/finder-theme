@@ -1,16 +1,11 @@
 {% comment %}
-  Search results — scoped to products so results stay shaped for the
-  file-icon grid (price/color/size), same real filtering/sorting as the
-  collection template.
+  Search results main content — scoped to products so results stay
+  shaped for the file-icon grid (price/color/size). No filter UI and
+  no numbered pagination by design — results show up to Shopify's own
+  250-per-page platform limit and simply scroll vertically.
 {% endcomment %}
 <div class="collection-main">
   {%- paginate search.results by section.settings.products_per_page -%}
-    {%- if search.performed -%}
-      <div class="collection-toolbar">
-        {% render 'facets', results: search, results_url: routes.search_url, preserve_query: search.terms %}
-      </div>
-    {%- endif -%}
-
     {%- if search.performed == false -%}
       {%- liquid
         assign prompt_title = 'general.search.prompt_title' | t
@@ -39,7 +34,6 @@
           {%- endfor -%}
         </ul>
       </div>
-      {% render 'pagination', paginate: paginate %}
     {%- endif -%}
   {%- endpaginate -%}
 </div>
@@ -52,10 +46,11 @@
       "type": "range",
       "id": "products_per_page",
       "label": "t:sections.main_search.settings.products_per_page.label",
-      "min": 12,
-      "max": 48,
+      "info": "t:sections.main_search.settings.products_per_page.info",
+      "min": 24,
+      "max": 248,
       "step": 4,
-      "default": 24
+      "default": 248
     }
   ]
 }

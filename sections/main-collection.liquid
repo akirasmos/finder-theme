@@ -1,14 +1,12 @@
 {% comment %}
-  Collection template main content: real Shopify filtering, sorting,
-  pagination, and the shared icon/list product grid (view switch itself
-  lives in the global finder-breadcrumb section's toolbar).
+  Collection template main content: the shared icon/list product grid
+  (view switch lives in the global finder-breadcrumb section's toolbar).
+  No filter UI and no numbered pagination by design — the grid shows
+  every product up to Shopify's own 250-per-page platform limit and
+  simply scrolls vertically inside the window.
 {% endcomment %}
 <div class="collection-main">
   {%- paginate collection.products by section.settings.products_per_page -%}
-    <div class="collection-toolbar">
-      {% render 'facets', results: collection, results_url: collection.url %}
-    </div>
-
     {%- if collection.products.size == 0 -%}
       {%- liquid
         assign empty_title = 'products.collection.empty_title' | t
@@ -37,7 +35,6 @@
           {%- endfor -%}
         </ul>
       </div>
-      {% render 'pagination', paginate: paginate %}
     {%- endif -%}
   {%- endpaginate -%}
 </div>
@@ -50,10 +47,11 @@
       "type": "range",
       "id": "products_per_page",
       "label": "t:sections.main_collection.settings.products_per_page.label",
-      "min": 12,
-      "max": 48,
+      "info": "t:sections.main_collection.settings.products_per_page.info",
+      "min": 24,
+      "max": 248,
       "step": 4,
-      "default": 24
+      "default": 248
     }
   ]
 }
