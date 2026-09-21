@@ -2,6 +2,12 @@
   Product page, styled as a macOS "Get Info" panel: preview at top, then
   a metadata table (Kind/Created/Color/Size/Price) with the buy box as
   the table's own final rows rather than a bolted-on widget.
+
+  "Remaining stock" for the Move to Bag button is inventory minus what
+  the customer already has of this variant in their Bag (from this or
+  an earlier visit) — not inventory on its own — otherwise the button
+  would allow exactly `inventory_quantity` more clicks regardless of
+  what's already been added.
 {% endcomment %}
 {%- liquid
   assign current_variant = product.selected_or_first_available_variant
@@ -13,9 +19,39 @@
   if kind_label == blank
     assign kind_label = 'products.product.kind_default' | t
   endif
+
+  assign variant_cart_quantity = 0
+  for item in cart.items
+    if item.variant_id == current_variant.id
+      assign variant_cart_quantity = item.quantity
+    endif
+  endfor
+  assign inventory_tracked = false
+  assign inventory_remaining = 1
+  if current_variant.inventory_management == 'shopify'
+    assign inventory_tracked = true
+    assign inventory_remaining = current_variant.inventory_quantity | minus: variant_cart_quantity
+  endif
+  assign at_stock_cap = false
+  if inventory_tracked and inventory_remaining <= 0
+    assign at_stock_cap = true
+  endif
+
+  assign cart_quantity_pairs = ''
+  for item in cart.items
+    if item.product_id == product.id
+      assign pair = '"' | append: item.variant_id | append: '":' | append: item.quantity
+      if cart_quantity_pairs == ''
+        assign cart_quantity_pairs = pair
+      else
+        assign cart_quantity_pairs = cart_quantity_pairs | append: ',' | append: pair
+      endif
+    endif
+  endfor
 -%}
 <div class="product-info-window" data-money-format="{{ shop.money_format | escape }}">
   <script type="application/json" data-product-json>{{ product.variants | json }}</script>
+  <script type="application/json" data-cart-quantities>{ {{ cart_quantity_pairs }} }</script>
 
   <div class="product-preview">
     <div class="product-preview__main">
@@ -126,16 +162,19 @@
               data-add-to-bag
               data-label-available="{{ 'general.cart.move_to_bag' | t }}"
               data-label-sold-out="{{ 'products.product.sold_out' | t }}"
+              data-label-max-stock="{{ 'general.cart.max_in_stock' | t }}"
               data-label-unavailable="{{ 'products.product.unavailable' | t }}"
               data-label-moved="{{ 'general.cart.moved_to_bag' | t }}"
               data-label-error="{{ 'general.cart.error' | t }}"
-              {% unless current_variant.available %}disabled aria-disabled="true"{% endunless %}
+              {% if current_variant.available == false or at_stock_cap %}disabled aria-disabled="true"{% endif %}
             >
               <span data-add-to-bag-label>
-                {%- if current_variant.available -%}
-                  {{ 'general.cart.move_to_bag' | t }}
-                {%- else -%}
+                {%- if current_variant.available == false -%}
                   {{ 'products.product.sold_out' | t }}
+                {%- elsif at_stock_cap -%}
+                  {{ 'general.cart.max_in_stock' | t }}
+                {%- else -%}
+                  {{ 'general.cart.move_to_bag' | t }}
                 {%- endif -%}
               </span>
               <span class="btn-progress" aria-hidden="true"></span>

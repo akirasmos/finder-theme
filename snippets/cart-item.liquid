@@ -3,7 +3,7 @@
 {% endcomment %}
 {%- liquid
   assign quantity_tracked = false
-  if item.variant.inventory_management == 'shopify' and item.variant.inventory_policy == 'deny'
+  if item.variant.inventory_management == 'shopify'
     assign quantity_tracked = true
     assign quantity_max = item.variant.inventory_quantity | at_least: 0
   endif

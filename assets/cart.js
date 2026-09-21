@@ -1,8 +1,7 @@
 /**
- * standard.zip — AJAX Bag (cart). Handles "Move to Bag" from the product
- * page (with its copy-progress micro-animation) and in-place quantity/
- * remove updates on the Bag page itself. Loaded on every page since the
- * title bar's Bag badge can change from anywhere a product form exists.
+ * standard.zip — AJAX Bag (cart): "Move to Bag" on the product page and
+ * in-place quantity/remove updates on the Bag page. Loaded everywhere,
+ * since the title bar's Bag badge can change from any product form.
  */
 (function () {
   'use strict';
@@ -26,10 +25,8 @@
   }
 
   function updateCartBadge(count) {
-    // Every place that shows a live Bag count (title bar, and optionally
-    // a sidebar "Locations" link) marks itself with these two attributes
-    // so they all stay in sync after an AJAX add/change, not just the
-    // one the server happened to render a badge into at page load.
+    // Updates every live Bag count on the page (title bar, sidebar), not
+    // just whichever one the server rendered at page load.
     document.querySelectorAll('[data-cart-count-container]').forEach(function (container) {
       var badge = qs('[data-cart-count]', container);
       if (count > 0) {
@@ -63,9 +60,7 @@
     return match ? format.replace(match[0], value) : format;
   }
 
-  /* ---------------------------------------------------------------------
-     Move to Bag — product page
-     ------------------------------------------------------------------- */
+  // Move to Bag — product page
   function initProductForm() {
     var form = qs('[data-product-form]');
     if (!form) return;
@@ -77,6 +72,7 @@
 
       var label = qs('[data-add-to-bag-label]', button);
       var formData = new FormData(form);
+      var variantId = formData.get('id');
 
       button.disabled = true;
       button.classList.add('is-loading');
@@ -85,7 +81,7 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
-          id: formData.get('id'),
+          id: variantId,
           quantity: formData.get('quantity') || 1
         })
       }).then(function (response) {
@@ -114,7 +110,14 @@
           });
         })
         .then(function (cart) {
-          if (cart) updateCartBadge(cart.item_count);
+          if (!cart) return;
+          updateCartBadge(cart.item_count);
+          var lineItem = cart.items.filter(function (i) {
+            return String(i.variant_id) === String(variantId);
+          })[0];
+          if (window.standardZipSyncBuyButton) {
+            window.standardZipSyncBuyButton(variantId, lineItem ? lineItem.quantity : 0);
+          }
         })
         .catch(function () {
           button.classList.remove('is-loading');
@@ -127,16 +130,15 @@
         })
         .then(function () {
           button.classList.remove('is-success', 'is-error');
-          button.disabled = false;
-          button.setAttribute('aria-disabled', 'false');
-          if (label) label.textContent = button.getAttribute('data-label-available');
+          // Re-derive the button's state instead of assuming "available":
+          // a second click can already have disabled it for hitting the
+          // stock limit by the time this settles.
+          if (window.standardZipSyncBuyButton) window.standardZipSyncBuyButton();
         });
     });
   }
 
-  /* ---------------------------------------------------------------------
-     Bag page — quantity +/- and remove via /cart/change.js
-     ------------------------------------------------------------------- */
+  // Bag page — quantity +/- and remove via /cart/change.js
   function initCartPage() {
     var form = qs('[data-cart-form]');
     if (!form) return;
@@ -170,10 +172,8 @@
     function refreshRow(itemEl, item) {
       if (!item) return;
       var input = qs('[data-cart-quantity-input]', itemEl);
-      // The server is the source of truth for quantity: it silently caps
-      // an update at available inventory rather than erroring, so the
-      // input has to be corrected back to what actually landed in the
-      // cart whenever it differs from what was requested.
+      // Server caps an over-requested update rather than erroring, so
+      // correct the input back to what actually landed in the cart.
       if (input) input.value = item.quantity;
       var priceEl = qs('[data-cart-item-price]', itemEl);
       if (priceEl) priceEl.textContent = formatMoney(item.final_line_price);

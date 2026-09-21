@@ -16,6 +16,21 @@
   var variants = jsonEl ? JSON.parse(jsonEl.textContent) : [];
   var optionKeys = ['option1', 'option2', 'option3'];
 
+  // How many of each variant of *this* product the customer already has
+  // in their Bag, keyed by variant id. Seeded from the server-rendered
+  // cart at page load, then kept in sync after every successful add (see
+  // the cart:variant-added listener below) so repeated "Move to Bag"
+  // clicks — or switching to a variant already sitting in the Bag —
+  // can't push a line past its actual stock.
+  var cartQtyEl = document.querySelector('[data-cart-quantities]');
+  var cartQuantities = cartQtyEl ? JSON.parse(cartQtyEl.textContent) : {};
+
+  function remainingStock(variant) {
+    if (variant.inventory_management !== 'shopify') return Infinity;
+    var inCart = cartQuantities[String(variant.id)] || 0;
+    return variant.inventory_quantity - inCart;
+  }
+
   var optionGroups = Array.prototype.slice.call(document.querySelectorAll('[data-option-position]'));
   var variantIdInput = document.querySelector('[data-product-variant-id]');
   var priceValueEl = document.querySelector('[data-price-value]');
@@ -112,12 +127,17 @@
     if (availabilityRow) availabilityRow.hidden = !!variant.available;
 
     if (submitButton) {
-      submitButton.disabled = !variant.available;
-      submitButton.setAttribute('aria-disabled', String(!variant.available));
+      var atStockCap = variant.available && remainingStock(variant) <= 0;
+      submitButton.disabled = !variant.available || atStockCap;
+      submitButton.setAttribute('aria-disabled', String(!variant.available || atStockCap));
       if (submitLabel) {
-        submitLabel.textContent = variant.available
-          ? submitButton.getAttribute('data-label-available')
-          : submitButton.getAttribute('data-label-sold-out');
+        if (!variant.available) {
+          submitLabel.textContent = submitButton.getAttribute('data-label-sold-out');
+        } else if (atStockCap) {
+          submitLabel.textContent = submitButton.getAttribute('data-label-max-stock');
+        } else {
+          submitLabel.textContent = submitButton.getAttribute('data-label-available');
+        }
       }
     }
 
@@ -142,6 +162,19 @@
   });
 
   updateOptionAvailability();
+
+  // Called by cart.js: with (variantId, quantity) after a successful
+  // /cart/add.js call, to record the variant's new total Bag quantity
+  // (straight from the server, so it already accounts for anything
+  // Shopify itself capped) and re-render the button from it; with no
+  // arguments, to just re-render from whatever is already known. Always
+  // re-deriving from the shared cartQuantities map — rather than each
+  // caller assuming its own outcome — is what keeps this correct when
+  // two "Move to Bag" clicks are in flight at once.
+  window.standardZipSyncBuyButton = function (variantId, quantity) {
+    if (variantId != null) cartQuantities[String(variantId)] = quantity;
+    updateVariantUI(findVariant(getSelectedValues()));
+  };
 
   /* Thumbnail gallery */
   var thumbs = document.querySelectorAll('[data-product-thumb]');
