@@ -1,0 +1,75 @@
+<!doctype html>
+<html class="no-js" lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="canonical" href="{{ canonical_url }}">
+
+  {%- if page_description -%}
+    <meta name="description" content="{{ page_description | escape }}">
+  {%- endif -%}
+
+  <title>
+    {{ page_title }}
+    {%- if current_tags %} &mdash; {{ 'general.meta.tags' | t: tags: current_tags | join: ', ' }}{% endif -%}
+    {%- if current_page != 1 %} &mdash; {{ 'general.meta.page' | t: page: current_page }}{% endif -%}
+    {%- unless page_title contains shop.name %} &mdash; {{ shop.name }}{% endunless -%}
+  </title>
+
+  {%- if settings.favicon -%}
+    <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+  {%- endif -%}
+
+  <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+
+  {{ 'theme.css' | asset_url | stylesheet_tag }}
+
+  {%- style -%}
+    :root {
+      --color-accent: {{ settings.color_accent }};
+      --color-accent-hover: {{ settings.color_accent | color_darken: 12 }};
+      --color-accent-active: {{ settings.color_accent | color_darken: 22 }};
+      --color-selection-bg: {{ settings.color_accent | color_modify: 'alpha', 0.12 }};
+      --color-focus-ring: {{ settings.color_accent }};
+      --color-content-bg: {{ settings.color_content_bg }};
+      --color-window-bg: {{ settings.color_content_bg }};
+      --color-overlay-bg: {{ settings.color_content_bg }};
+      --color-sidebar-bg: {{ settings.color_chrome_bg }};
+      --color-breadcrumb-bg: {{ settings.color_chrome_bg }};
+      --color-statusbar-bg: {{ settings.color_chrome_bg }};
+      --color-titlebar-bg: {{ settings.color_chrome_bg | color_darken: 3 }};
+    }
+  {%- endstyle -%}
+
+  <script>
+    window.Shopify = window.Shopify || {};
+    window.Shopify.routes = window.Shopify.routes || {};
+    window.Shopify.routes.root = "{{ routes.root_url }}";
+  </script>
+  <script src="{{ 'theme.js' | asset_url }}" defer="defer"></script>
+  <script src="{{ 'cart.js' | asset_url }}" defer="defer"></script>
+
+  {{ content_for_header }}
+</head>
+<body class="finder-body">
+  <a class="visually-hidden skip-link" href="#MainContent">{{ 'general.accessibility.skip_to_content' | t }}</a>
+  <div id="CartStatus" class="visually-hidden" role="status" aria-live="polite"></div>
+
+  <div class="finder-window" id="FinderWindow">
+    {% section 'finder-titlebar' %}
+    {% section 'finder-sidebar' %}
+    {% section 'finder-breadcrumb' %}
+
+    <main class="finder-main" id="MainContent" tabindex="-1">
+      {{ content_for_layout }}
+    </main>
+
+    {% section 'finder-statusbar' %}
+  </div>
+
+  {% render 'spotlight-search' %}
+  {% section 'footer' %}
+  <script src="{{ 'predictive-search.js' | asset_url }}" defer="defer"></script>
+</body>
+</html>

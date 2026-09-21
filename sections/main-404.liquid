@@ -1,0 +1,24 @@
+{% comment %}
+  404 — presented as a Finder "file not found" alert rather than a bare
+  error page.
+{% endcomment %}
+{%- liquid
+  assign title = 'general.not_found.title' | t
+  assign description = 'general.not_found.description' | t
+  assign action_label = 'general.not_found.action' | t
+-%}
+<div class="not-found">
+  {% render 'empty-state',
+    icon: 'alert',
+    title: title,
+    description: description,
+    action_label: action_label,
+    action_url: routes.root_url
+  %}
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main_404.name"
+}
+{% endschema %}

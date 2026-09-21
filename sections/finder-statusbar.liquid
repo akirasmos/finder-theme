@@ -1,0 +1,37 @@
+{% comment %}
+  Global status bar. Left side mirrors Finder's "N items" readout with
+  a real, computed count. Right side is a merchant-editable tagline
+  standing in for Finder's "GB available".
+{% endcomment %}
+<footer class="finder-statusbar">
+  <span data-status-count>
+    {%- case template.name -%}
+      {%- when 'collection' -%}
+        {{ 'general.status.item_count' | t: count: collection.products_count }}
+      {%- when 'index' -%}
+        {{ 'general.status.item_count' | t: count: collections['all'].products_count }}
+      {%- when 'search' -%}
+        {%- if search.performed -%}
+          {{ 'general.status.result_count' | t: count: search.results_count }}
+        {%- endif -%}
+    {%- endcase -%}
+  </span>
+  <button type="button" class="finder-statusbar__tagline" data-footer-toggle aria-haspopup="dialog">
+    {% render 'icon', name: 'info' %}
+    <span>{{ section.settings.tagline }}</span>
+  </button>
+</footer>
+
+{% schema %}
+{
+  "name": "t:sections.finder_statusbar.name",
+  "settings": [
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "t:sections.finder_statusbar.settings.tagline.label",
+      "default": "Free shipping over $150"
+    }
+  ]
+}
+{% endschema %}

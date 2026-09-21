@@ -1,0 +1,50 @@
+{% comment %}
+  Collection template main content: the product grid. No filter UI and
+  no numbered pagination by design — the grid shows every product up
+  to Shopify's own 250-per-page platform limit and simply scrolls
+  vertically inside the window.
+{% endcomment %}
+<div class="collection-main">
+  {%- paginate collection.products by section.settings.products_per_page -%}
+    {%- if collection.products.size == 0 -%}
+      {%- liquid
+        assign empty_title = 'products.collection.empty_title' | t
+        assign empty_description = 'products.collection.empty_description' | t
+        assign empty_action_label = 'products.collection.empty_action' | t
+      -%}
+      {% render 'empty-state',
+        icon: 'folder',
+        title: empty_title,
+        description: empty_description,
+        action_label: empty_action_label,
+        action_url: routes.all_products_collection_url
+      %}
+    {%- else -%}
+      <div class="file-browser">
+        <ul class="file-grid" role="list">
+          {%- for product in collection.products -%}
+            {% render 'product-file-icon', product: product %}
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endif -%}
+  {%- endpaginate -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main_collection.name",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "t:sections.main_collection.settings.products_per_page.label",
+      "info": "t:sections.main_collection.settings.products_per_page.info",
+      "min": 24,
+      "max": 248,
+      "step": 4,
+      "default": 248
+    }
+  ]
+}
+{% endschema %}

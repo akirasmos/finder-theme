@@ -1,0 +1,81 @@
+{% comment %}
+  Global title bar: traffic lights, mobile sidebar toggle, the window
+  title (a plain-text echo of the current path), and search/bag actions.
+  Rendered once from layout/theme.liquid on every page.
+{% endcomment %}
+{%- liquid
+  assign root_title = section.settings.window_title | default: 'standard.zip'
+  assign crumb_2_title = blank
+  assign crumb_3_title = blank
+
+  case template.name
+    when 'product'
+      assign crumb_2_title = product.type | default: 'All Products'
+      assign crumb_3_title = product.title
+    when 'collection'
+      assign crumb_2_title = collection.title
+    when 'search'
+      assign crumb_2_title = 'general.search.title' | t
+      if search.performed and search.terms != blank
+        assign crumb_3_title = search.terms
+      endif
+    when 'cart'
+      assign crumb_2_title = 'general.cart.title' | t
+    when 'page'
+      assign crumb_2_title = page.title
+    when '404'
+      assign crumb_2_title = 'general.not_found.title' | t
+  endcase
+-%}
+<header class="finder-titlebar">
+  <div class="finder-titlebar__controls">
+    {% render 'traffic-lights' %}
+    <button type="button" class="icon-btn finder-titlebar__sidebar-toggle" data-sidebar-toggle aria-controls="FinderSidebar" aria-expanded="false">
+      <span class="visually-hidden">{{ 'general.sidebar.toggle' | t }}</span>
+      {% render 'icon', name: 'sidebar' %}
+    </button>
+  </div>
+
+  <h1 class="finder-titlebar__title">
+    <span class="finder-titlebar__title-path">{{ root_title }}</span>
+    {%- if crumb_2_title != blank -%}
+      <span class="finder-titlebar__title-separator" aria-hidden="true">&rsaquo;</span>
+      {%- if crumb_3_title != blank -%}
+        <span class="finder-titlebar__title-path">{{ crumb_2_title }}</span>
+        <span class="finder-titlebar__title-separator" aria-hidden="true">&rsaquo;</span>
+        <span class="finder-titlebar__title-current">{{ crumb_3_title }}</span>
+      {%- else -%}
+        <span class="finder-titlebar__title-current">{{ crumb_2_title }}</span>
+      {%- endif -%}
+    {%- endif -%}
+  </h1>
+
+  <div class="finder-titlebar__actions">
+    <a href="{{ routes.search_url }}" class="icon-btn" data-search-trigger aria-haspopup="dialog">
+      <span class="visually-hidden">{{ 'general.search.label' | t }}</span>
+      {% render 'icon', name: 'search' %}
+    </a>
+    <a href="{{ routes.cart_url }}" class="icon-btn" data-cart-icon data-cart-count-container data-cart-count-class="icon-btn__badge">
+      <span class="visually-hidden">{{ 'general.cart.title' | t }}</span>
+      {% render 'icon', name: 'bag' %}
+      {%- if cart.item_count > 0 -%}
+        <span class="icon-btn__badge" data-cart-count>{{ cart.item_count }}</span>
+      {%- endif -%}
+    </a>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "t:sections.finder_titlebar.name",
+  "settings": [
+    {
+      "type": "text",
+      "id": "window_title",
+      "label": "t:sections.finder_titlebar.settings.window_title.label",
+      "default": "standard.zip",
+      "info": "t:sections.finder_titlebar.settings.window_title.info"
+    }
+  ]
+}
+{% endschema %}

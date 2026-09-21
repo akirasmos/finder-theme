@@ -1,0 +1,53 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "standard.zip",
+    "theme_author": "standard.zip",
+    "theme_version": "1.0.0",
+    "theme_documentation_url": "https://standard.zip",
+    "theme_support_email": "support@standard.zip"
+  },
+  {
+    "name": "t:settings_schema.colors.name",
+    "settings": [
+      {
+        "type": "header",
+        "content": "t:settings_schema.colors.header_accent"
+      },
+      {
+        "type": "color",
+        "id": "color_accent",
+        "label": "t:settings_schema.colors.color_accent.label",
+        "default": "#0850c7"
+      },
+      {
+        "type": "header",
+        "content": "t:settings_schema.colors.header_window"
+      },
+      {
+        "type": "color",
+        "id": "color_content_bg",
+        "label": "t:settings_schema.colors.color_content_bg.label",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "color_chrome_bg",
+        "label": "t:settings_schema.colors.color_chrome_bg.label",
+        "info": "t:settings_schema.colors.color_chrome_bg.info",
+        "default": "#f6f6f7"
+      }
+    ]
+  },
+  {
+    "name": "t:settings_schema.favicon.name",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "t:settings_schema.favicon.favicon.label",
+        "info": "t:settings_schema.favicon.favicon.info"
+      }
+    ]
+  }
+]

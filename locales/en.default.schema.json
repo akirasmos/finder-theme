@@ -1,0 +1,224 @@
+{
+  "settings_schema": {
+    "colors": {
+      "name": "Colors",
+      "header_accent": "Accent",
+      "color_accent": {
+        "label": "Accent color"
+      },
+      "header_window": "Window",
+      "color_content_bg": {
+        "label": "Content background"
+      },
+      "color_chrome_bg": {
+        "label": "Chrome background",
+        "info": "Used for the sidebar, path bar, and status bar. The title bar is automatically a touch darker for depth."
+      }
+    },
+    "favicon": {
+      "name": "Favicon",
+      "favicon": {
+        "label": "Favicon image",
+        "info": "Will be scaled down to 32 x 32px"
+      }
+    }
+  },
+  "sections": {
+    "finder_titlebar": {
+      "name": "Title bar",
+      "settings": {
+        "window_title": {
+          "label": "Window title",
+          "info": "Shown as the root of the path, e.g. “standard.zip › Outerwear”"
+        }
+      }
+    },
+    "finder_sidebar": {
+      "name": "Sidebar",
+      "settings": {
+        "favorites_heading": {
+          "label": "Favorites heading"
+        },
+        "locations_heading": {
+          "label": "Locations heading"
+        }
+      },
+      "blocks": {
+        "favorite_link": {
+          "name": "Favorite (collection)",
+          "settings": {
+            "collection": {
+              "label": "Collection"
+            },
+            "label": {
+              "label": "Label",
+              "info": "Leave blank to use the collection's title"
+            },
+            "icon": {
+              "label": "Icon"
+            },
+            "show_count": {
+              "label": "Show item count"
+            }
+          }
+        },
+        "location_link": {
+          "name": "Location",
+          "settings": {
+            "label": {
+              "label": "Label"
+            },
+            "url": {
+              "label": "Link",
+              "info": "An internal path (e.g. \/cart) or any URL"
+            },
+            "icon": {
+              "label": "Icon"
+            },
+            "show_cart_count": {
+              "label": "Show live Bag item count",
+              "info": "Only meaningful when this location points at the Bag"
+            }
+          }
+        }
+      }
+    },
+    "finder_breadcrumb": {
+      "name": "Path bar",
+      "settings": {
+        "window_title": {
+          "label": "Window title",
+          "info": "Shown as the root of the path bar; keep this in sync with the title bar setting."
+        }
+      }
+    },
+    "finder_statusbar": {
+      "name": "Status bar",
+      "settings": {
+        "tagline": {
+          "label": "Tagline",
+          "info": "Shown on the right side of the status bar on every page."
+        }
+      }
+    },
+    "main_collection": {
+      "name": "Product grid",
+      "settings": {
+        "products_per_page": {
+          "label": "Products per page",
+          "info": "Shopify renders at most 250 products per page; there is no page-number control, so higher values just mean more scrolling instead of another page."
+        }
+      }
+    },
+    "home_collection": {
+      "name": "All products (homepage)",
+      "settings": {
+        "products_per_page": {
+          "label": "Products per page",
+          "info": "Shopify renders at most 250 products per page; there is no page-number control, so higher values just mean more scrolling instead of another page."
+        }
+      }
+    },
+    "main_product": {
+      "name": "Product information"
+    },
+    "main_cart": {
+      "name": "Bag"
+    },
+    "main_404": {
+      "name": "404 page"
+    },
+    "main_page": {
+      "name": "Page"
+    },
+    "footer": {
+      "name": "Footer",
+      "settings": {
+        "heading": {
+          "label": "Heading"
+        },
+        "about_text": {
+          "label": "About text"
+        },
+        "instagram_url": {
+          "label": "Instagram URL"
+        },
+        "tiktok_url": {
+          "label": "TikTok URL"
+        },
+        "copyright_extra": {
+          "label": "Additional copyright line",
+          "info": "Shown after the automatic © year and shop name"
+        }
+      },
+      "blocks": {
+        "link": {
+          "name": "Link",
+          "settings": {
+            "label": {
+              "label": "Label"
+            },
+            "url": {
+              "label": "Link"
+            }
+          }
+        }
+      }
+    },
+    "main_search": {
+      "name": "Search results",
+      "settings": {
+        "products_per_page": {
+          "label": "Products per page",
+          "info": "Shopify renders at most 250 results per page; there is no page-number control, so higher values just mean more scrolling instead of another page."
+        }
+      }
+    },
+    "gallery": {
+      "name": "Gallery",
+      "blocks": {
+        "photo": {
+          "name": "Photo",
+          "settings": {
+            "image": {
+              "label": "Image"
+            },
+            "caption": {
+              "label": "Caption",
+              "info": "Used as the filename shown under the thumbnail; leave blank for a generic one"
+            }
+          }
+        },
+        "video": {
+          "name": "Video",
+          "settings": {
+            "video": {
+              "label": "Video"
+            },
+            "caption": {
+              "label": "Caption",
+              "info": "Used as the filename shown under the thumbnail; leave blank for a generic one"
+            }
+          }
+        }
+      }
+    },
+    "featured_collection": {
+      "name": "Featured collection",
+      "settings": {
+        "heading": {
+          "label": "Heading"
+        },
+        "collection": {
+          "label": "Collection"
+        },
+        "products_to_show": {
+          "label": "Products to show"
+        },
+        "view_all_label": {
+          "label": "“View all” label"
+        }
+      }
+    }
+  }
+}

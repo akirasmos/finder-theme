@@ -1,0 +1,40 @@
+{% comment %}
+  Global Spotlight-lite search overlay. Rendered once in theme.liquid,
+  hidden until JS opens it; the title bar's search icon still works as a
+  plain link to the search page with no JS (progressive enhancement).
+{% endcomment %}
+<div
+  class="spotlight"
+  data-spotlight
+  hidden
+  data-no-results-title="{{ 'general.search.no_results' | t }}"
+  data-no-results-description="{{ 'general.search.no_results_description' | t }}"
+  data-view-all-label="{{ 'general.search.view_all' | t }}"
+>
+  <div class="spotlight__backdrop" data-spotlight-backdrop></div>
+  <div class="spotlight__panel" role="dialog" aria-modal="true" aria-label="{{ 'general.search.label' | t }}">
+    <form action="{{ routes.search_url }}" method="get" role="search" class="spotlight__form" data-spotlight-form>
+      <input type="hidden" name="type" value="product">
+      {% render 'icon', name: 'search' %}
+      <input
+        type="search"
+        name="q"
+        class="spotlight__input"
+        placeholder="{{ 'general.search.placeholder' | t }}"
+        autocomplete="off"
+        autocorrect="off"
+        spellcheck="false"
+        data-spotlight-input
+        aria-label="{{ 'general.search.label' | t }}"
+        aria-controls="SpotlightResults"
+        role="combobox"
+        aria-expanded="false"
+        aria-autocomplete="list"
+      >
+      <button type="button" class="spotlight__close" data-spotlight-close aria-label="{{ 'general.accessibility.close' | t }}">
+        {% render 'icon', name: 'close' %}
+      </button>
+    </form>
+    <div class="spotlight__results" id="SpotlightResults" data-spotlight-results></div>
+  </div>
+</div>

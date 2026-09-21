@@ -1,0 +1,77 @@
+{% comment %}
+  Global path bar: a real, clickable breadcrumb trail (not a title-bar
+  echo).
+{% endcomment %}
+{%- liquid
+  assign root_title = section.settings.window_title | default: 'standard.zip'
+-%}
+<div class="finder-breadcrumb">
+  <ol class="finder-breadcrumb__list">
+    <li class="finder-breadcrumb__item" {% if template.name == 'index' %}aria-current="page"{% endif %}>
+      <a href="{{ routes.root_url }}" class="finder-breadcrumb__link">
+        {% render 'icon', name: 'folder' %}
+        <span>{{ root_title }}</span>
+      </a>
+    </li>
+
+    {%- case template.name -%}
+      {%- when 'product' -%}
+        {%- if product.type != blank -%}
+          <li class="finder-breadcrumb__item">
+            {% render 'icon', name: 'chevron-right', class: 'finder-breadcrumb__chevron' %}
+            <a href="{{ routes.all_products_collection_url }}?filter.p.product_type={{ product.type | url_param_escape }}" class="finder-breadcrumb__link">{{ product.type }}</a>
+          </li>
+        {%- endif -%}
+        <li class="finder-breadcrumb__item" aria-current="page">
+          {% render 'icon', name: 'chevron-right', class: 'finder-breadcrumb__chevron' %}
+          <span class="finder-breadcrumb__link">{{ product.title }}</span>
+        </li>
+      {%- when 'collection' -%}
+        <li class="finder-breadcrumb__item" aria-current="page">
+          {% render 'icon', name: 'chevron-right', class: 'finder-breadcrumb__chevron' %}
+          <span class="finder-breadcrumb__link">{{ collection.title }}</span>
+        </li>
+      {%- when 'search' -%}
+        <li class="finder-breadcrumb__item" aria-current="page">
+          {% render 'icon', name: 'chevron-right', class: 'finder-breadcrumb__chevron' %}
+          <span class="finder-breadcrumb__link">
+            {%- if search.performed and search.terms != blank -%}
+              {{ 'general.search.results_for' | t: terms: search.terms }}
+            {%- else -%}
+              {{ 'general.search.label' | t }}
+            {%- endif -%}
+          </span>
+        </li>
+      {%- when 'cart' -%}
+        <li class="finder-breadcrumb__item" aria-current="page">
+          {% render 'icon', name: 'chevron-right', class: 'finder-breadcrumb__chevron' %}
+          <span class="finder-breadcrumb__link">{{ 'general.cart.title' | t }}</span>
+        </li>
+      {%- when 'page' -%}
+        <li class="finder-breadcrumb__item" aria-current="page">
+          {% render 'icon', name: 'chevron-right', class: 'finder-breadcrumb__chevron' %}
+          <span class="finder-breadcrumb__link">{{ page.title }}</span>
+        </li>
+      {%- when '404' -%}
+        <li class="finder-breadcrumb__item" aria-current="page">
+          {% render 'icon', name: 'chevron-right', class: 'finder-breadcrumb__chevron' %}
+          <span class="finder-breadcrumb__link">{{ 'general.not_found.title' | t }}</span>
+        </li>
+    {%- endcase -%}
+  </ol>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.finder_breadcrumb.name",
+  "settings": [
+    {
+      "type": "text",
+      "id": "window_title",
+      "label": "t:sections.finder_breadcrumb.settings.window_title.label",
+      "default": "standard.zip",
+      "info": "t:sections.finder_breadcrumb.settings.window_title.info"
+    }
+  ]
+}
+{% endschema %}

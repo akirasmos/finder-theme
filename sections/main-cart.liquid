@@ -1,0 +1,52 @@
+{% comment %}
+  Cart, styled as the "Bag" folder. Real AJAX quantity/remove updates via
+  cart.js, with a plain HTML fallback (positional updates[] array posted
+  to /cart) if JS is unavailable.
+{% endcomment %}
+{%- if cart.item_count == 0 -%}
+  {%- liquid
+    assign empty_title = 'general.cart.empty_title' | t
+    assign empty_description = 'general.cart.empty_description' | t
+    assign empty_action_label = 'general.cart.continue_browsing' | t
+  -%}
+  {% render 'empty-state',
+    icon: 'bag',
+    title: empty_title,
+    description: empty_description,
+    action_label: empty_action_label,
+    action_url: routes.all_products_collection_url
+  %}
+{%- else -%}
+  <form action="{{ routes.cart_url }}" method="post" novalidate data-cart-form class="bag" data-money-format="{{ shop.money_format | escape }}">
+    <div class="bag__header" aria-hidden="true">
+      <span></span>
+      <span>{{ 'products.collection.column_name' | t }}</span>
+      <span>{{ 'products.product.quantity' | t }}</span>
+      <span>{{ 'general.cart.line_total' | t }}</span>
+      <span></span>
+    </div>
+
+    <ul class="bag-list" data-cart-items>
+      {%- for item in cart.items -%}
+        {% render 'cart-item', item: item, line_index: forloop.index %}
+      {%- endfor -%}
+    </ul>
+
+    <div class="bag-summary">
+      <div class="bag-summary__row">
+        <span>{{ 'general.cart.subtotal' | t }}</span>
+        <span class="bag-summary__value" data-cart-subtotal>{{ cart.total_price | money }}</span>
+      </div>
+      <p class="bag-summary__note">{{ 'general.cart.taxes_note' | t }}</p>
+      <button type="submit" name="checkout" class="btn btn--primary bag-summary__checkout">
+        {{ 'general.cart.checkout' | t }}
+      </button>
+    </div>
+  </form>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.main_cart.name"
+}
+{% endschema %}

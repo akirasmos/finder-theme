@@ -1,0 +1,43 @@
+{% comment %}
+  Homepage — shows the store's "All" collection directly, so opening
+  the site is the same as opening the All folder. Shares the exact
+  grid markup/CSS with the collection template.
+{% endcomment %}
+{%- assign all_collection = collections['all'] -%}
+<div class="collection-main">
+  {%- paginate all_collection.products by section.settings.products_per_page -%}
+    {%- if all_collection.products.size == 0 -%}
+      {%- liquid
+        assign empty_title = 'products.collection.empty_title' | t
+        assign empty_description = 'products.collection.empty_description' | t
+      -%}
+      {% render 'empty-state', icon: 'folder', title: empty_title, description: empty_description %}
+    {%- else -%}
+      <div class="file-browser">
+        <ul class="file-grid" role="list">
+          {%- for product in all_collection.products -%}
+            {% render 'product-file-icon', product: product %}
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endif -%}
+  {%- endpaginate -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.home_collection.name",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "t:sections.home_collection.settings.products_per_page.label",
+      "info": "t:sections.home_collection.settings.products_per_page.info",
+      "min": 24,
+      "max": 248,
+      "step": 4,
+      "default": 248
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,21 @@
+{% comment %}
+  Usage: {% render 'price', product: product %}
+  Works off product price range (price_min/max) so it's correct in grid
+  contexts where no variant has been selected yet.
+{% endcomment %}
+{%- liquid
+  assign on_sale = false
+  if product.compare_at_price_min > product.price_min
+    assign on_sale = true
+  endif
+-%}
+<span class="price {% if on_sale %}price--sale{% endif %}">
+  {%- if product.price_varies -%}
+    <span class="price__value">{{ 'products.price.from' | t }} {{ product.price_min | money }}</span>
+  {%- else -%}
+    <span class="price__value">{{ product.price | money }}</span>
+  {%- endif -%}
+  {%- if on_sale -%}
+    <span class="price__compare-at">{{ product.compare_at_price_min | money }}</span>
+  {%- endif -%}
+</span>

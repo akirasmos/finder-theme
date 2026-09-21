@@ -1,0 +1,12 @@
+{% comment %}
+  Purely decorative window controls. Real DOM elements with the authentic
+  macOS red/yellow/green dots, but intentionally non-interactive: no hover
+  or press feedback, nothing closes, minimizes, or navigates anything.
+  aria-hidden and tabindex="-1" because there is nothing for assistive
+  tech or keyboard users to act on.
+{% endcomment %}
+<div class="traffic-lights" aria-hidden="true">
+  <button type="button" class="traffic-lights__button traffic-lights__button--close" tabindex="-1"></button>
+  <button type="button" class="traffic-lights__button traffic-lights__button--minimize" tabindex="-1"></button>
+  <button type="button" class="traffic-lights__button traffic-lights__button--zoom" tabindex="-1"></button>
+</div>

@@ -1,0 +1,8 @@
+{
+  "sections": {
+    "main": {
+      "type": "home-collection"
+    }
+  },
+  "order": ["main"]
+}

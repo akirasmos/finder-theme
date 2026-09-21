@@ -1,0 +1,205 @@
+{% comment %}
+  Product page, styled as a macOS "Get Info" panel: preview at top, then
+  a metadata table (Kind/Created/Color/Size/Price) with the buy box as
+  the table's own final rows rather than a bolted-on widget.
+
+  "Remaining stock" for the Move to Bag button is inventory minus what
+  the customer already has of this variant in their Bag (from this or
+  an earlier visit) — not inventory on its own — otherwise the button
+  would allow exactly `inventory_quantity` more clicks regardless of
+  what's already been added.
+{% endcomment %}
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign created = product.created_at | date: '%B %-d, %Y, %-I:%M %p'
+  assign kind_label = product.category.name
+  if kind_label == blank
+    assign kind_label = product.type
+  endif
+  if kind_label == blank
+    assign kind_label = 'products.product.kind_default' | t
+  endif
+
+  assign variant_cart_quantity = 0
+  for item in cart.items
+    if item.variant_id == current_variant.id
+      assign variant_cart_quantity = item.quantity
+    endif
+  endfor
+  assign inventory_tracked = false
+  assign inventory_remaining = 1
+  if current_variant.inventory_management == 'shopify'
+    assign inventory_tracked = true
+    assign inventory_remaining = current_variant.inventory_quantity | minus: variant_cart_quantity
+  endif
+  assign at_stock_cap = false
+  if inventory_tracked and inventory_remaining <= 0
+    assign at_stock_cap = true
+  endif
+
+  assign cart_quantity_pairs = ''
+  for item in cart.items
+    if item.product_id == product.id
+      assign pair = '"' | append: item.variant_id | append: '":' | append: item.quantity
+      if cart_quantity_pairs == ''
+        assign cart_quantity_pairs = pair
+      else
+        assign cart_quantity_pairs = cart_quantity_pairs | append: ',' | append: pair
+      endif
+    endif
+  endfor
+-%}
+<div class="product-info-window" data-money-format="{{ shop.money_format | escape }}">
+  <script type="application/json" data-product-json>{{ product.variants | json }}</script>
+  <script type="application/json" data-cart-quantities>{ {{ cart_quantity_pairs }} }</script>
+
+  <div class="product-preview">
+    <div class="product-preview__main">
+      {%- if product.featured_media -%}
+        <img
+          class="product-preview__image"
+          data-product-main-image
+          src="{{ product.featured_media.preview_image | image_url: width: 800 }}"
+          srcset="{{ product.featured_media.preview_image | image_url: width: 400 }} 400w, {{ product.featured_media.preview_image | image_url: width: 800 }} 800w, {{ product.featured_media.preview_image | image_url: width: 1200 }} 1200w"
+          sizes="(max-width: 767px) 84vw, 420px"
+          width="{{ product.featured_media.preview_image.width }}"
+          height="{{ product.featured_media.preview_image.height }}"
+          alt="{{ product.featured_media.alt | default: product.title | escape }}"
+          loading="eager"
+          fetchpriority="high"
+        >
+      {%- else -%}
+        <span class="product-preview__placeholder">{% render 'icon', name: 'file' %}</span>
+      {%- endif -%}
+    </div>
+    <p class="product-preview__filename">{{ product.title }}</p>
+
+    {%- if product.media.size > 1 -%}
+      <div class="product-preview__thumbs" role="listbox" aria-label="{{ 'products.product.thumbnails' | t }}">
+        {%- for media in product.media -%}
+          <button
+            type="button"
+            class="product-preview__thumb{% if forloop.first %} is-active{% endif %}"
+            data-product-thumb
+            data-full="{{ media.preview_image | image_url: width: 1200 }}"
+            data-srcset="{{ media.preview_image | image_url: width: 400 }} 400w, {{ media.preview_image | image_url: width: 800 }} 800w, {{ media.preview_image | image_url: width: 1200 }} 1200w"
+            role="option"
+            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+          >
+            <img src="{{ media.preview_image | image_url: width: 120 }}" width="60" height="60" alt="" loading="lazy">
+          </button>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+
+  <div class="info-panel">
+    <h1 class="info-panel__title">{{ product.title }}</h1>
+
+    {%- form 'product', product, data-product-form: true, class: 'info-panel__form' -%}
+      <dl class="info-table">
+        <div class="info-table__row">
+          <dt>{{ 'products.product.kind' | t }}</dt>
+          <dd>{{ kind_label }}</dd>
+        </div>
+
+        <div class="info-table__row">
+          <dt>{{ 'products.product.created' | t }}</dt>
+          <dd>{{ created }}</dd>
+        </div>
+
+        {%- for option in product.options_with_values -%}
+          <div class="info-table__row">
+            <dt>{{ option.name }}</dt>
+            <dd>
+              <div class="variant-picker" role="radiogroup" aria-label="{{ option.name }}" data-option-position="{{ forloop.index0 }}">
+                {%- for value in option.values -%}
+                  {%- assign option_input_id = 'ProductOption-' | append: section.id | append: '-' | append: forloop.parentloop.index0 | append: '-' | append: forloop.index0 -%}
+                  <input
+                    type="radio"
+                    id="{{ option_input_id }}"
+                    name="option-{{ forloop.parentloop.index0 }}"
+                    value="{{ value | escape }}"
+                    class="variant-picker__input visually-hidden"
+                    {% if option.selected_value == value %}checked{% endif %}
+                  >
+                  <label for="{{ option_input_id }}" class="variant-picker__pill">{{ value }}</label>
+                {%- endfor -%}
+              </div>
+            </dd>
+          </div>
+        {%- endfor -%}
+
+        <div class="info-table__row">
+          <dt>{{ 'products.product.price' | t }}</dt>
+          <dd>
+            <span class="info-table__price" data-product-price>
+              {%- if current_variant.compare_at_price > current_variant.price -%}
+                <span class="price price--sale">
+                  <span class="price__value" data-price-value>{{ current_variant.price | money }}</span>
+                  <span class="price__compare-at" data-price-compare>{{ current_variant.compare_at_price | money }}</span>
+                </span>
+              {%- else -%}
+                <span data-price-value>{{ current_variant.price | money }}</span>
+                <span class="price__compare-at" data-price-compare hidden></span>
+              {%- endif -%}
+            </span>
+          </dd>
+        </div>
+
+        <div class="info-table__row info-table__row--availability" data-availability-row {% if current_variant.available %}hidden{% endif %}>
+          <dt>{{ 'products.product.availability' | t }}</dt>
+          <dd class="info-table__availability" data-availability-text>{{ 'products.product.sold_out' | t }}</dd>
+        </div>
+
+        <div class="info-table__row info-table__row--action">
+          <dd class="info-table__action">
+            <input type="hidden" name="quantity" value="1">
+            <input type="hidden" name="id" value="{{ current_variant.id }}" data-product-variant-id>
+            <button
+              type="submit"
+              class="btn btn--primary info-table__submit"
+              data-add-to-bag
+              data-label-available="{{ 'general.cart.move_to_bag' | t }}"
+              data-label-sold-out="{{ 'products.product.sold_out' | t }}"
+              data-label-max-stock="{{ 'general.cart.max_in_stock' | t }}"
+              data-label-unavailable="{{ 'products.product.unavailable' | t }}"
+              data-label-moved="{{ 'general.cart.moved_to_bag' | t }}"
+              data-label-error="{{ 'general.cart.error' | t }}"
+              {% if current_variant.available == false or at_stock_cap %}disabled aria-disabled="true"{% endif %}
+            >
+              <span data-add-to-bag-label>
+                {%- if current_variant.available == false -%}
+                  {{ 'products.product.sold_out' | t }}
+                {%- elsif at_stock_cap -%}
+                  {{ 'general.cart.max_in_stock' | t }}
+                {%- else -%}
+                  {{ 'general.cart.move_to_bag' | t }}
+                {%- endif -%}
+              </span>
+              <span class="btn-progress" aria-hidden="true"></span>
+            </button>
+          </dd>
+        </div>
+      </dl>
+    {%- endform -%}
+
+    {%- if product.description != blank -%}
+      <details class="info-panel__description" open>
+        <summary>
+          {% render 'icon', name: 'chevron-down' %}
+          <span>{{ 'products.product.description' | t }}</span>
+        </summary>
+        <div class="rte">{{ product.description }}</div>
+      </details>
+    {%- endif -%}
+  </div>
+</div>
+
+<script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+
+{% schema %}
+{
+  "name": "t:sections.main_product.name"
+}
+{% endschema %}

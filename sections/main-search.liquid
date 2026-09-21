@@ -1,0 +1,50 @@
+{% comment %}
+  Search results main content — scoped to products so results stay
+  shaped for the file-icon grid. No filter UI and no numbered
+  pagination by design — results show up to Shopify's own 250-per-page
+  platform limit and simply scroll vertically.
+{% endcomment %}
+<div class="collection-main">
+  {%- paginate search.results by section.settings.products_per_page -%}
+    {%- if search.performed == false -%}
+      {%- liquid
+        assign prompt_title = 'general.search.prompt_title' | t
+      -%}
+      {% render 'empty-state', icon: 'search', title: prompt_title %}
+    {%- elsif search.results.size == 0 -%}
+      {%- liquid
+        assign empty_title = 'general.search.no_results' | t
+        assign empty_description = 'general.search.no_results_description' | t
+      -%}
+      {% render 'empty-state', icon: 'search', title: empty_title, description: empty_description %}
+    {%- else -%}
+      <div class="file-browser">
+        <ul class="file-grid" role="list">
+          {%- for item in search.results -%}
+            {%- if item.object_type == 'product' -%}
+              {% render 'product-file-icon', product: item %}
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endif -%}
+  {%- endpaginate -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main_search.name",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "t:sections.main_search.settings.products_per_page.label",
+      "info": "t:sections.main_search.settings.products_per_page.info",
+      "min": 24,
+      "max": 248,
+      "step": 4,
+      "default": 248
+    }
+  ]
+}
+{% endschema %}

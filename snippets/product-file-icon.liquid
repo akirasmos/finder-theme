@@ -1,0 +1,46 @@
+{% comment %}
+  Shared product tile — an icon-view "file" card (filename + price).
+  Usage: {% render 'product-file-icon', product: product %}
+{% endcomment %}
+{%- liquid
+  assign img = product.featured_media.preview_image
+  assign on_sale = false
+  if product.compare_at_price_min > product.price_min
+    assign on_sale = true
+  endif
+-%}
+<li class="file-tile{% unless product.available %} file-tile--unavailable{% endunless %}">
+  <a href="{{ product.url }}" class="file-tile__link">
+    <span class="file-tile__icon-wrap">
+      {%- if img -%}
+        <img
+          class="file-tile__icon"
+          src="{{ img | image_url: width: 320 }}"
+          srcset="{{ img | image_url: width: 160 }} 160w, {{ img | image_url: width: 320 }} 320w, {{ img | image_url: width: 480 }} 480w, {{ img | image_url: width: 640 }} 640w"
+          sizes="(max-width: 480px) 38vw, (max-width: 767px) 26vw, 140px"
+          width="{{ img.width }}"
+          height="{{ img.height }}"
+          alt="{{ img.alt | default: product.title | escape }}"
+          loading="lazy"
+          decoding="async"
+        >
+      {%- else -%}
+        <span class="file-tile__icon file-tile__icon--placeholder">
+          {% render 'icon', name: 'file' %}
+        </span>
+      {%- endif -%}
+      {%- if on_sale -%}
+        <span class="file-tile__badge file-tile__badge--sale">
+          <span class="visually-hidden">{{ 'products.badges.sale' | t }}</span>
+        </span>
+      {%- elsif product.available == false -%}
+        <span class="file-tile__badge file-tile__badge--sold-out">
+          <span class="visually-hidden">{{ 'products.badges.sold_out' | t }}</span>
+        </span>
+      {%- endif -%}
+    </span>
+
+    <span class="file-tile__name">{{ product.title }}</span>
+    <span class="file-tile__price">{% render 'price', product: product %}</span>
+  </a>
+</li>

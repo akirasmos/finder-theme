@@ -1,0 +1,135 @@
+{
+  "current": "Default",
+  "presets": {
+    "Default": {
+      "color_accent": "#0850c7",
+      "color_content_bg": "#ffffff",
+      "color_chrome_bg": "#f6f6f7",
+      "sections": {
+        "finder-titlebar": {
+          "type": "finder-titlebar",
+          "settings": {
+            "window_title": "standard.zip"
+          }
+        },
+        "finder-breadcrumb": {
+          "type": "finder-breadcrumb",
+          "settings": {
+            "window_title": "standard.zip"
+          }
+        },
+        "finder-sidebar": {
+          "type": "finder-sidebar",
+          "settings": {
+            "favorites_heading": "Favorites",
+            "locations_heading": "Locations"
+          },
+          "blocks": {
+            "fav-recents": {
+              "type": "favorite_link",
+              "settings": {
+                "collection": "recents",
+                "label": "Recents",
+                "icon": "clock",
+                "show_count": true
+              }
+            },
+            "fav-all": {
+              "type": "favorite_link",
+              "settings": {
+                "collection": "all",
+                "label": "All",
+                "icon": "grid",
+                "show_count": true
+              }
+            },
+            "fav-clothing": {
+              "type": "favorite_link",
+              "settings": {
+                "collection": "clothing",
+                "label": "Clothing",
+                "icon": "folder",
+                "show_count": true
+              }
+            },
+            "fav-accessories": {
+              "type": "favorite_link",
+              "settings": {
+                "collection": "accessories",
+                "label": "Accessories",
+                "icon": "folder",
+                "show_count": true
+              }
+            },
+            "loc-bag": {
+              "type": "location_link",
+              "settings": {
+                "label": "Bag",
+                "url": "/cart",
+                "icon": "bag",
+                "show_cart_count": true
+              }
+            },
+            "loc-gallery": {
+              "type": "location_link",
+              "settings": {
+                "label": "Gallery",
+                "url": "/pages/gallery",
+                "icon": "image",
+                "show_cart_count": false
+              }
+            }
+          },
+          "block_order": [
+            "fav-recents",
+            "fav-all",
+            "fav-clothing",
+            "fav-accessories",
+            "loc-bag",
+            "loc-gallery"
+          ]
+        },
+        "finder-statusbar": {
+          "type": "finder-statusbar",
+          "settings": {
+            "tagline": "Free shipping over $150"
+          }
+        },
+        "footer": {
+          "type": "footer",
+          "settings": {
+            "heading": "About standard.zip",
+            "about_text": "<p>Small-batch garments, shipped worldwide. Questions? We read every email.</p>",
+            "instagram_url": "",
+            "tiktok_url": "",
+            "copyright_extra": ""
+          },
+          "blocks": {
+            "link-about": {
+              "type": "link",
+              "settings": {
+                "label": "About",
+                "url": "/pages/about"
+              }
+            },
+            "link-shipping": {
+              "type": "link",
+              "settings": {
+                "label": "Shipping & Returns",
+                "url": "/pages/shipping-returns"
+              }
+            },
+            "link-contact": {
+              "type": "link",
+              "settings": {
+                "label": "Contact",
+                "url": "/pages/contact"
+              }
+            }
+          },
+          "block_order": ["link-about", "link-shipping", "link-contact"]
+        }
+      }
+    }
+  }
+}
