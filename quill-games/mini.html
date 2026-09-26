@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Mini Crossword — The Quill Games</title>
+  <meta name="description" content="A bite-sized daily crossword from The Quill.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/games.css">
+  <style>
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 8px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+    .timer {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      font-size: 17px;
+      background: none;
+      border: 0;
+      color: var(--text);
+      padding: 6px 8px;
+      border-radius: 4px;
+    }
+    .timer:hover { background: var(--surface); }
+    .timer svg { width: 20px; height: 20px; }
+    .menus { display: flex; gap: 4px; }
+    .menu { position: relative; }
+    .menu > button {
+      background: none;
+      border: 0;
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 600;
+      padding: 8px 12px;
+      border-radius: 4px;
+    }
+    .menu > button:hover, .menu.open > button { background: var(--surface); }
+    .menu ul {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      list-style: none;
+      margin: 4px 0 0;
+      padding: 6px 0;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      box-shadow: var(--shadow);
+      min-width: 150px;
+      z-index: 50;
+    }
+    .menu.open ul { display: block; }
+    .menu li button {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: 0;
+      color: var(--text);
+      padding: 10px 16px;
+      font-size: 15px;
+    }
+    .menu li button:hover { background: var(--surface); }
+
+    .layout {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px 16px;
+      display: grid;
+      grid-template-columns: minmax(0, 480px) minmax(0, 1fr);
+      gap: 40px;
+      align-items: start;
+    }
+    .puzzle-meta {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .puzzle-meta h1 { font-family: var(--serif); font-size: 30px; margin: 0; }
+    .puzzle-meta .date { font-size: 16px; color: var(--muted); }
+    .puzzle-meta .byline { font-size: 14px; color: var(--muted); width: 100%; }
+
+    .clue-bar {
+      display: flex;
+      align-items: center;
+      background: var(--cell-word);
+      color: var(--text);
+      min-height: 56px;
+      border-radius: 4px;
+      margin-bottom: 12px;
+      font-size: 17px;
+    }
+    .clue-bar .text { flex: 1; padding: 8px 4px; }
+    .clue-bar .num { font-weight: 800; margin-right: 8px; }
+    .clue-bar button {
+      background: none;
+      border: 0;
+      color: inherit;
+      align-self: stretch;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+    }
+    .clue-bar svg { width: 22px; height: 22px; }
+
+    .grid-wrap { position: relative; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      border: 3px solid var(--grid-border);
+      aspect-ratio: 1;
+      width: 100%;
+      user-select: none;
+      touch-action: manipulation;
+    }
+    .cell {
+      position: relative;
+      border: 1px solid var(--tile-filled);
+      background: var(--cell-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(28px, 10vw, 52px);
+      font-weight: 500;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .cell.block { background: var(--block); cursor: default; }
+    .cell.in-word { background: var(--cell-word); }
+    .cell.active { background: var(--cell-active); }
+    .cell .n {
+      position: absolute;
+      top: 3px;
+      left: 4px;
+      font-size: clamp(10px, 3vw, 15px);
+      font-weight: 600;
+    }
+    .cell.wrong .ch { color: #d0021b; }
+    .cell.wrong::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top right, transparent calc(50% - 1px), #d0021b, transparent calc(50% + 1px));
+    }
+    .cell.revealed::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      border-style: solid;
+      border-width: 0 12px 12px 0;
+      border-color: transparent #2860d8 transparent transparent;
+    }
+    .cell.good .ch { color: #2860d8; }
+    .grid.solved .cell:not(.block) { background: var(--cell-bg); }
+    .grid.solved .cell:not(.block) .ch { animation: wave 0.5s ease; animation-delay: var(--d); }
+    @keyframes wave {
+      50% { transform: translateY(-8px); }
+    }
+
+    .cover {
+      position: absolute;
+      inset: 0;
+      background: var(--surface);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 16px;
+      padding: 24px;
+      border: 3px solid var(--grid-border);
+    }
+    .cover.show { display: flex; }
+    .cover h2 { font-family: var(--serif); font-size: 28px; margin: 0; }
+    .cover p { margin: 0; color: var(--muted); }
+
+    .clue-lists {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .clue-lists h3 {
+      font-size: 14px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 8px;
+      margin: 0 0 4px;
+    }
+    .clue-lists ol { list-style: none; margin: 0; padding: 0; }
+    .clue-lists li {
+      display: flex;
+      gap: 10px;
+      padding: 8px 8px 8px 10px;
+      border-left: 8px solid transparent;
+      cursor: pointer;
+      line-height: 1.35;
+      border-radius: 2px;
+    }
+    .clue-lists li .num { font-weight: 800; min-width: 18px; }
+    .clue-lists li.cross { border-left-color: var(--cell-word); }
+    .clue-lists li.current { background: var(--cell-word); }
+    .clue-lists li.filled .txt { color: var(--muted); }
+
+    .touch-kb { display: none; margin-top: 12px; }
+
+    @media (max-width: 760px) {
+      .layout { grid-template-columns: 1fr; gap: 16px; padding-top: 12px; }
+      .puzzle-meta h1 { font-size: 24px; }
+      .clue-lists { display: none; }
+      .touch-kb { display: block; }
+      .grid-col { max-width: 480px; margin: 0 auto; width: 100%; }
+      .puzzle-meta .byline { display: none; }
+      .grid-wrap { width: min(100%, max(260px, calc(100dvh - 450px))); margin: 0 auto; }
+    }
+  </style>
+</head>
+<body>
+  <header class="games-header">
+    <a class="brand" href="index.html" aria-label="Back to The Quill Games">
+      <span class="masthead">The Quill</span><span class="section">Games</span>
+    </a>
+    <span class="title">The Mini</span>
+    <div class="header-actions">
+      <button class="icon-btn" data-open="help-modal" aria-label="How to play">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <button class="timer" id="timer" aria-label="Pause">
+      <span id="timer-text">0:00</span>
+      <svg id="pause-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+    </button>
+    <div class="menus">
+      <div class="menu" id="check-menu">
+        <button type="button">Check</button>
+        <ul>
+          <li><button data-check="cell">Square</button></li>
+          <li><button data-check="word">Word</button></li>
+          <li><button data-check="puzzle">Puzzle</button></li>
+        </ul>
+      </div>
+      <div class="menu" id="reveal-menu">
+        <button type="button">Reveal</button>
+        <ul>
+          <li><button data-reveal="cell">Square</button></li>
+          <li><button data-reveal="word">Word</button></li>
+          <li><button data-reveal="puzzle">Puzzle</button></li>
+          <li><button data-reset>Reset puzzle</button></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="puzzle-meta">
+      <h1>The Mini Crossword</h1>
+      <span class="date" id="date"></span>
+      <span class="byline" id="byline"></span>
+    </div>
+
+    <div class="grid-col">
+      <div class="clue-bar">
+        <button id="prev-clue" aria-label="Previous clue">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </button>
+        <div class="text"><span class="num" id="bar-num"></span><span id="bar-text"></span></div>
+        <button id="next-clue" aria-label="Next clue">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button>
+      </div>
+      <div class="grid-wrap">
+        <div class="grid" id="grid" aria-label="Crossword grid"></div>
+        <div class="cover" id="start-cover">
+          <h2>Ready to start solving?</h2>
+          <p>Five across, five down, and the clock is ticking.</p>
+          <button class="btn" id="start-btn" style="background:var(--text);color:var(--bg)">Play</button>
+        </div>
+        <div class="cover" id="pause-cover">
+          <h2>Your game is paused.</h2>
+          <p>Ready to play?</p>
+          <button class="btn" id="resume-btn" style="background:var(--text);color:var(--bg)">Continue</button>
+        </div>
+      </div>
+      <div class="keyboard touch-kb" id="keyboard"></div>
+    </div>
+
+    <div class="clue-lists">
+      <div><h3>Across</h3><ol id="across-list"></ol></div>
+      <div><h3>Down</h3><ol id="down-list"></ol></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="help-modal">
+    <div class="modal" role="dialog" aria-labelledby="help-title">
+      <button class="icon-btn close" data-close aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+      <h2 id="help-title">How To Play</h2>
+      <ul>
+        <li>Tap or click a square, then type to fill it in.</li>
+        <li>Tap the highlighted square again (or press the space bar) to switch between Across and Down.</li>
+        <li>Use the arrow keys to move around and Tab or Enter to jump to the next clue.</li>
+        <li>Stuck? <b>Check</b> shows wrong letters in red. <b>Reveal</b> fills in the answer.</li>
+      </ul>
+      <p>A new Mini is released every day at midnight. How fast can you solve it?</p>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="done-modal">
+    <div class="modal" role="dialog" aria-labelledby="done-title" style="text-align:center">
+      <button class="icon-btn close" data-close aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+      <div style="font-size:48px">🎉</div>
+      <h2 id="done-title">Congratulations!</h2>
+      <p id="done-text"></p>
+      <div class="stats-row" id="mini-stats" style="margin-top:16px"></div>
+      <div class="modal-actions">
+        <button class="btn" id="share-btn">Share</button>
+        <a class="btn secondary" href="quirdle.html" style="text-decoration:none">Play Quirdle</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/common.js"></script>
+  <script src="js/puzzles.js"></script>
+  <script src="js/mini.js"></script>
+</body>
+</html>

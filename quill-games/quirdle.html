@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quirdle — The Quill Games</title>
+  <meta name="description" content="Guess the hidden five-letter word in six tries. A new Quirdle every day from The Quill.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/games.css">
+  <style>
+    html, body { height: 100%; }
+    body { display: flex; flex-direction: column; }
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+      min-height: 0;
+    }
+    .board-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 0;
+      padding: 12px;
+    }
+    .board {
+      display: grid;
+      grid-template-rows: repeat(6, 1fr);
+      gap: 5px;
+      width: min(350px, 100%, calc((100dvh - 56px - 220px) * 5 / 6));
+      aspect-ratio: 5 / 6;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 5px;
+    }
+    .row.shake { animation: shake 0.6s; }
+    .tile {
+      border: 2px solid var(--tile-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(20px, 8vw, 32px);
+      font-weight: 700;
+      text-transform: uppercase;
+      user-select: none;
+    }
+    .tile.filled { border-color: var(--tile-filled); animation: tilepop 0.1s; }
+    .tile.correct, .tile.present, .tile.absent { border: 0; color: #fff; }
+    .tile.correct { background: var(--correct); }
+    .tile.present { background: var(--present); }
+    .tile.absent { background: var(--absent); }
+    .tile.flip { animation: flip 0.5s ease forwards; }
+    .tile.bounce { animation: bounce 1s ease; }
+
+    @keyframes tilepop {
+      from { transform: scale(0.8); }
+      40% { transform: scale(1.1); }
+    }
+    @keyframes flip {
+      0% { transform: rotateX(0); }
+      50% { transform: rotateX(-90deg); }
+      100% { transform: rotateX(0); }
+    }
+    @keyframes shake {
+      10%, 90% { transform: translateX(-1px); }
+      20%, 80% { transform: translateX(2px); }
+      30%, 50%, 70% { transform: translateX(-4px); }
+      40%, 60% { transform: translateX(4px); }
+    }
+    @keyframes bounce {
+      0%, 20% { transform: translateY(0); }
+      40% { transform: translateY(-30px); }
+      50% { transform: translateY(5px); }
+      60% { transform: translateY(-15px); }
+      80% { transform: translateY(2px); }
+      100% { transform: translateY(0); }
+    }
+
+    .example { display: flex; gap: 4px; margin: 8px 0 4px; }
+    .example .tile { width: 36px; height: 36px; font-size: 20px; }
+    .countdown { font-size: 28px; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .reveal-word { text-align: center; font-size: 15px; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <header class="games-header">
+    <a class="brand" href="index.html" aria-label="Back to The Quill Games">
+      <span class="masthead">The Quill</span><span class="section">Games</span>
+    </a>
+    <span class="title">Quirdle</span>
+    <div class="header-actions">
+      <button class="icon-btn" data-open="help-modal" aria-label="How to play">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/></svg>
+      </button>
+      <button class="icon-btn" id="stats-btn" aria-label="Statistics">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11V3H8v6H2v12h20V11h-6zm-6-6h4v14h-4V5zm-6 6h4v8H4v-8zm16 8h-4v-6h4v6z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <div class="board-wrap"><div class="board" id="board" aria-label="Quirdle board"></div></div>
+    <div class="keyboard" id="keyboard" aria-label="Keyboard"></div>
+  </main>
+
+  <div class="modal-backdrop" id="help-modal">
+    <div class="modal" role="dialog" aria-labelledby="help-title">
+      <button class="icon-btn close" data-close aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+      <h2 id="help-title">How To Play</h2>
+      <p style="font-size:20px;margin-top:0">Guess the Quirdle in 6 tries.</p>
+      <ul>
+        <li>Each guess must be a valid 5-letter word.</li>
+        <li>The color of the tiles will change to show how close your guess was to the word.</li>
+      </ul>
+      <h3>Examples</h3>
+      <div class="example"><div class="tile correct">Q</div><div class="tile">U</div><div class="tile">I</div><div class="tile">L</div><div class="tile">L</div></div>
+      <p style="margin-top:0"><b>Q</b> is in the word and in the correct spot.</p>
+      <div class="example"><div class="tile">S</div><div class="tile present">T</div><div class="tile">O</div><div class="tile">R</div><div class="tile">Y</div></div>
+      <p style="margin-top:0"><b>T</b> is in the word but in the wrong spot.</p>
+      <div class="example"><div class="tile">P</div><div class="tile">R</div><div class="tile">E</div><div class="tile absent">S</div><div class="tile">S</div></div>
+      <p style="margin-top:0"><b>S</b> is not in the word in any spot.</p>
+      <p style="border-top:1px solid var(--line);padding-top:12px">A new puzzle is released daily at midnight.</p>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="stats-modal">
+    <div class="modal" role="dialog" aria-labelledby="stats-title">
+      <button class="icon-btn close" data-close aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+      <h2 id="stats-title" style="text-align:center">Statistics</h2>
+      <p class="reveal-word" id="reveal-word" hidden></p>
+      <div class="stats-row" id="stats-row"></div>
+      <h3>Guess Distribution</h3>
+      <div id="dist"></div>
+      <div id="finished" hidden>
+        <div class="modal-actions" style="align-items:center">
+          <div style="text-align:center">
+            <div style="font-size:12px;font-weight:700;text-transform:uppercase">Next Quirdle</div>
+            <div class="countdown" id="countdown">--:--:--</div>
+          </div>
+          <button class="btn" id="share-btn">
+            Share
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+          </button>
+        </div>
+        <p style="text-align:center;margin-top:20px"><a href="mini.html">Play today's Mini Crossword →</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/common.js"></script>
+  <script src="js/words.js"></script>
+  <script src="js/quirdle.js"></script>
+</body>
+</html>
