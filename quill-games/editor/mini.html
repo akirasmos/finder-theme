@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light only">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Quill Mini Editor – The Quill Games</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Oswald:wght@400;500;600&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/games.css">
+  <style>
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 24px 16px 64px; }
+    h1, h2 { font-family: var(--serif); color: var(--heading); }
+    h1 { margin: 0 0 8px; }
+    h2 { font-size: 20px; margin: 24px 0 8px; }
+    .note {
+      background: var(--surface);
+      border-left: 5px solid var(--gold);
+      padding: 12px 16px;
+      border-radius: 4px;
+      line-height: 1.5;
+    }
+    .cols { display: grid; grid-template-columns: minmax(0, 380px) minmax(0, 1fr); gap: 40px; margin-top: 24px; }
+    @media (max-width: 820px) { .cols { grid-template-columns: 1fr; } }
+    .grid-wrap { container-type: inline-size; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-rows: repeat(5, minmax(0, 1fr));
+      aspect-ratio: 1;
+      border: 3px solid var(--grid-border);
+      user-select: none;
+    }
+    .cell {
+      position: relative;
+      border: 1px solid var(--tile-filled);
+      background: var(--cell-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11cqw;
+      line-height: 1;
+      text-transform: uppercase;
+      cursor: pointer;
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+    }
+    .cell.block { background: var(--block); }
+    .cell.in-word { background: var(--cell-word); }
+    .cell.active { background: var(--cell-active); }
+    .cell.block.active { outline: 4px solid var(--cell-active); outline-offset: -4px; }
+    .cell .n { position: absolute; top: 3px; left: 4px; font-size: 3.2cqw; font-weight: 600; }
+    .tools { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    .tools .btn { padding: 8px 14px; font-size: 14px; }
+    .hint { color: var(--muted); font-size: 14px; line-height: 1.5; margin-top: 10px; }
+    label { display: flex; flex-direction: column; gap: 4px; font-weight: 600; font-size: 14px; }
+    input, select, textarea {
+      font: inherit;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: #fff;
+      color: var(--text);
+      width: 100%;
+    }
+    .meta { display: grid; grid-template-columns: 1fr 1fr 160px; gap: 12px; }
+    @media (max-width: 560px) { .meta { grid-template-columns: 1fr; } }
+    .clue-row { display: grid; grid-template-columns: 34px 80px 1fr; gap: 8px; align-items: center; margin: 6px 0; }
+    .clue-row .num { font-weight: 700; }
+    .clue-row .ans { font-weight: 700; letter-spacing: 2px; font-size: 14px; }
+    .checks li { margin: 4px 0; }
+    .checks .warn { color: #b3261e; font-weight: 600; }
+    .checks .ok { color: var(--correct); font-weight: 600; }
+    textarea { min-height: 220px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; }
+    .actions { display: flex; gap: 12px; flex-wrap: wrap; margin: 12px 0; }
+  </style>
+</head>
+<body>
+  <header class="games-header">
+    <a class="brand" href="../index.html"><span class="masthead">The Quill</span><span class="section">Games</span></a>
+    <span class="title">Mini Editor</span>
+    <span></span>
+  </header>
+
+  <main class="wrap">
+    <h1>Make a Quill Mini</h1>
+    <p class="note">
+      <b>Drafting here doesn't publish anything.</b> Build the grid, write a clue for every word,
+      test-solve it, then copy the finished entry into <code>js/mini-puzzles.js</code> on GitHub.
+      Only the Mini editor listed in <code>.github/CODEOWNERS</code> can approve it going live.
+    </p>
+
+    <div class="cols">
+      <div>
+        <div class="grid-wrap"><div class="grid" id="grid"></div></div>
+        <div class="tools">
+          <button class="btn secondary" id="block-btn">Black square</button>
+          <button class="btn secondary" id="clear-btn">Clear grid</button>
+          <select id="load" style="width:auto"><option value="">Load a published puzzle…</option></select>
+        </div>
+        <p class="hint">
+          Click a square and type. Press <b>.</b> or <b>#</b> for a black square, <b>Space</b> or click again
+          to switch between Across and Down, and use the arrow keys to move.
+        </p>
+      </div>
+
+      <div>
+        <div class="meta">
+          <label>Title <input id="title" placeholder="Deadline Day"></label>
+          <label>Author <input id="author" placeholder="Your name"></label>
+          <label>Date (optional) <input id="date" type="date"></label>
+        </div>
+
+        <h2>Across</h2>
+        <div id="across"></div>
+        <h2>Down</h2>
+        <div id="down"></div>
+
+        <h2>Checks</h2>
+        <ul class="checks" id="checks"></ul>
+
+        <div class="actions">
+          <button class="btn" id="test-btn">Test solve</button>
+          <button class="btn secondary" id="copy-btn">Copy puzzle entry</button>
+        </div>
+        <textarea id="output" readonly aria-label="Puzzle entry to paste into mini-puzzles.js"></textarea>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/common.js"></script>
+  <script src="../js/quirdle-valid.js"></script>
+  <script src="../js/quirdle-answers.js"></script>
+  <script src="../js/mini-puzzles.js"></script>
+  <script>
+  (function () {
+    var SIZE = 5;
+    var DRAFT_KEY = "mini-editor-draft";
+    // 5-letter words we know are real. Shorter words aren't checked.
+    var dictionary = new Set(window.QUIRDLE_VALID.split(" ").concat(window.QUIRDLE_ANSWERS));
+
+    var draft = Quill.load(DRAFT_KEY, null) || blank();
+    var sel = { r: 0, c: 0 };
+    var dir = "across";
+    var words = [];
+
+    function blank() {
+      return { cells: new Array(SIZE * SIZE).fill(""), clues: {}, title: "", author: "", date: "" };
+    }
+    function i(r, c) { return r * SIZE + c; }
+    function isBlock(r, c) { return draft.cells[i(r, c)] === "#"; }
+
+    // ---------- Grid ----------
+    var gridEl = document.getElementById("grid");
+    var cellEls = [];
+    for (var k = 0; k < SIZE * SIZE; k++) {
+      var el = document.createElement("div");
+      el.className = "cell";
+      el.addEventListener("click", (function (r, c) {
+        return function () {
+          if (sel.r === r && sel.c === c) dir = dir === "across" ? "down" : "across";
+          sel = { r: r, c: c };
+          render();
+        };
+      })(Math.floor(k / SIZE), k % SIZE));
+      gridEl.appendChild(el);
+      cellEls.push(el);
+    }
+
+    function findWords() {
+      var list = [], numbers = {}, n = 1;
+      for (var r = 0; r < SIZE; r++) {
+        for (var c = 0; c < SIZE; c++) {
+          if (isBlock(r, c)) continue;
+          var a = (c === 0 || isBlock(r, c - 1)) && c + 1 < SIZE && !isBlock(r, c + 1);
+          var d = (r === 0 || isBlock(r - 1, c)) && r + 1 < SIZE && !isBlock(r + 1, c);
+          if (a || d) numbers[i(r, c)] = n++;
+          if (a) list.push(word("across", r, c, 0, 1));
+          if (d) list.push(word("down", r, c, 1, 0));
+        }
+      }
+      function word(wd, r, c, dr, dc) {
+        var w = { dir: wd, num: numbers[i(r, c)], cells: [], text: "" };
+        while (r < SIZE && c < SIZE && !isBlock(r, c)) {
+          w.cells.push(i(r, c));
+          w.text += draft.cells[i(r, c)] || "?";
+          r += dr; c += dc;
+        }
+        return w;
+      }
+      return { list: list, numbers: numbers };
+    }
+
+    function currentWord() {
+      var at = i(sel.r, sel.c);
+      return words.find(function (w) { return w.dir === dir && w.cells.indexOf(at) !== -1; });
+    }
+
+    function render() {
+      var found = findWords();
+      words = found.list;
+      var cw = currentWord();
+      for (var k = 0; k < SIZE * SIZE; k++) {
+        var v = draft.cells[k];
+        var el = cellEls[k];
+        el.className = "cell" + (v === "#" ? " block" : "") +
+          (cw && cw.cells.indexOf(k) !== -1 ? " in-word" : "") +
+          (k === i(sel.r, sel.c) ? " active" : "");
+        el.innerHTML = (found.numbers[k] ? '<span class="n">' + found.numbers[k] + "</span>" : "") +
+          (v && v !== "#" ? v : "");
+      }
+      renderClues();
+      renderChecks();
+      document.getElementById("output").value = entryText();
+      Quill.save(DRAFT_KEY, draft);
+    }
+
+    // Clues are remembered by direction + answer so they survive grid edits.
+    function clueKey(w) { return w.dir + ":" + w.text; }
+
+    function renderClues() {
+      ["across", "down"].forEach(function (d) {
+        var box = document.getElementById(d);
+        var focused = document.activeElement && box.contains(document.activeElement) ? document.activeElement.dataset.key : null;
+        box.innerHTML = "";
+        words.filter(function (w) { return w.dir === d; }).forEach(function (w) {
+          var row = document.createElement("div");
+          row.className = "clue-row";
+          row.innerHTML = '<span class="num">' + w.num + '</span><span class="ans"></span><input>';
+          row.querySelector(".ans").textContent = w.text;
+          var input = row.querySelector("input");
+          input.value = draft.clues[clueKey(w)] || "";
+          input.dataset.key = clueKey(w);
+          input.placeholder = "Clue for " + w.num + " " + d;
+          input.addEventListener("input", function () {
+            draft.clues[input.dataset.key] = input.value;
+            renderChecks();
+            document.getElementById("output").value = entryText();
+            Quill.save(DRAFT_KEY, draft);
+          });
+          box.appendChild(row);
+          if (focused === input.dataset.key) input.focus();
+        });
+      });
+    }
+
+    function renderChecks() {
+      var out = [];
+      var empty = draft.cells.filter(function (v) { return !v; }).length;
+      if (empty) out.push(["warn", empty + " empty square" + (empty > 1 ? "s" : "")]);
+      for (var k = 0; k < SIZE * SIZE; k++) {
+        if (draft.cells[k] === "#" || !draft.cells[k]) continue;
+        var inA = words.some(function (w) { return w.dir === "across" && w.cells.indexOf(k) !== -1; });
+        var inD = words.some(function (w) { return w.dir === "down" && w.cells.indexOf(k) !== -1; });
+        if (!inA || !inD) out.push(["warn", "Row " + (Math.floor(k / SIZE) + 1) + ", column " + (k % SIZE + 1) + " is only in one word (every letter should be in an across and a down)"]);
+      }
+      var seen = {};
+      words.forEach(function (w) {
+        var label = w.num + " " + w.dir + " (" + w.text + ")";
+        if (w.text.indexOf("?") === -1) {
+          if (w.text.length === 5 && !dictionary.has(w.text.toLowerCase())) out.push(["warn", label + " isn't in the dictionary. Double-check it's a real word"]);
+          if (seen[w.text]) out.push(["warn", w.text + " appears twice"]);
+          seen[w.text] = true;
+        }
+        if (!(draft.clues[clueKey(w)] || "").trim()) out.push(["warn", label + " needs a clue"]);
+      });
+      if (!words.length) out.push(["warn", "No words yet"]);
+      if (!out.length) out.push(["ok", "✓ Ready to publish"]);
+      document.getElementById("checks").innerHTML = out.map(function (o) {
+        return '<li class="' + o[0] + '">' + o[1] + "</li>";
+      }).join("");
+      return out[0][0] === "ok";
+    }
+
+    function puzzleObject() {
+      var grid = [];
+      for (var r = 0; r < SIZE; r++) {
+        grid.push(draft.cells.slice(r * SIZE, r * SIZE + SIZE).map(function (v) { return v || "?"; }).join(""));
+      }
+      var clues = function (d) {
+        return words.filter(function (w) { return w.dir === d; }).map(function (w) {
+          return [w.text, draft.clues[clueKey(w)] || ""];
+        });
+      };
+      var p = { title: draft.title || "Untitled", author: draft.author || "The Quill Staff" };
+      if (draft.date) p.date = draft.date;
+      p.grid = grid;
+      p.across = clues("across");
+      p.down = clues("down");
+      return p;
+    }
+
+    function entryText() {
+      var p = puzzleObject();
+      var q = JSON.stringify;
+      var lines = ["  {", "    title: " + q(p.title) + ",", "    author: " + q(p.author) + ","];
+      if (p.date) lines.push("    date: " + q(p.date) + ",");
+      lines.push("    grid: " + q(p.grid).replace(/,/g, ", ") + ",");
+      ["across", "down"].forEach(function (d) {
+        lines.push("    " + d + ": [");
+        p[d].forEach(function (e) { lines.push("      [" + q(e[0]) + ", " + q(e[1]) + "],"); });
+        lines.push("    ],");
+      });
+      lines.push("  },");
+      return lines.join("\n");
+    }
+
+    // ---------- Typing ----------
+    function step(forward) {
+      var dr = dir === "down" ? 1 : 0, dc = dir === "across" ? 1 : 0;
+      if (!forward) { dr = -dr; dc = -dc; }
+      var r = sel.r + dr, c = sel.c + dc;
+      if (r >= 0 && r < SIZE && c >= 0 && c < SIZE) sel = { r: r, c: c };
+    }
+
+    document.addEventListener("keydown", function (e) {
+      if (e.target.matches("input, textarea, select") || e.ctrlKey || e.metaKey || e.altKey) return;
+      var k = e.key, at = i(sel.r, sel.c);
+      if (/^[a-zA-Z]$/.test(k)) { draft.cells[at] = k.toUpperCase(); step(true); }
+      else if (k === "." || k === "#") { draft.cells[at] = draft.cells[at] === "#" ? "" : "#"; step(true); }
+      else if (k === "Backspace" || k === "Delete") {
+        if (draft.cells[at]) draft.cells[at] = "";
+        else { step(false); draft.cells[i(sel.r, sel.c)] = ""; }
+      }
+      else if (k === " ") dir = dir === "across" ? "down" : "across";
+      else if (k.indexOf("Arrow") === 0) {
+        var dr = k === "ArrowUp" ? -1 : k === "ArrowDown" ? 1 : 0;
+        var dc = k === "ArrowLeft" ? -1 : k === "ArrowRight" ? 1 : 0;
+        var r = sel.r + dr, c = sel.c + dc;
+        if (r >= 0 && r < SIZE && c >= 0 && c < SIZE) sel = { r: r, c: c };
+      } else return;
+      e.preventDefault();
+      render();
+    });
+
+    document.getElementById("block-btn").addEventListener("click", function () {
+      var at = i(sel.r, sel.c);
+      draft.cells[at] = draft.cells[at] === "#" ? "" : "#";
+      render();
+    });
+    document.getElementById("clear-btn").addEventListener("click", function () {
+      if (!confirm("Clear the whole grid and all clues?")) return;
+      draft = blank();
+      fillMeta();
+      render();
+    });
+
+    ["title", "author", "date"].forEach(function (f) {
+      document.getElementById(f).addEventListener("input", function (e) {
+        draft[f] = e.target.value;
+        render();
+      });
+    });
+    function fillMeta() {
+      ["title", "author", "date"].forEach(function (f) { document.getElementById(f).value = draft[f] || ""; });
+    }
+
+    // Load a published puzzle to edit or reuse.
+    var loadEl = document.getElementById("load");
+    window.MINI_PUZZLES.forEach(function (p, n) {
+      var o = document.createElement("option");
+      o.value = n;
+      o.textContent = (p.date ? p.date + " · " : "") + (p.title || "Puzzle " + (n + 1));
+      loadEl.appendChild(o);
+    });
+    loadEl.addEventListener("change", function () {
+      if (loadEl.value === "") return;
+      var p = window.MINI_PUZZLES[+loadEl.value];
+      draft = blank();
+      draft.title = p.title || ""; draft.author = p.author || ""; draft.date = p.date || "";
+      draft.cells = p.grid.join("").toUpperCase().split("").map(function (ch) { return ch === "#" ? "#" : ch; });
+      ["across", "down"].forEach(function (d) {
+        (p[d] || []).forEach(function (e) { draft.clues[d + ":" + e[0].toUpperCase()] = e[1]; });
+      });
+      loadEl.value = "";
+      fillMeta();
+      render();
+    });
+
+    document.getElementById("copy-btn").addEventListener("click", function () {
+      if (!renderChecks() && !confirm("Some checks haven't passed. Copy anyway?")) return;
+      navigator.clipboard.writeText(entryText()).then(
+        function () { Quill.toast("Copied. Paste it into the list in mini-puzzles.js"); },
+        function () { Quill.toast("Couldn't copy. Select the text below instead"); }
+      );
+    });
+    document.getElementById("test-btn").addEventListener("click", function () {
+      if (draft.cells.some(function (v) { return !v; })) return Quill.toast("Fill every square first");
+      Quill.save("mini-preview", puzzleObject());
+      window.open("../mini.html?preview", "_blank");
+    });
+
+    fillMeta();
+    render();
+  })();
+  </script>
+</body>
+</html>

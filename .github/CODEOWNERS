@@ -1,0 +1,20 @@
+# Who must approve changes to The Quill Games puzzles.
+#
+# This only takes effect once branch protection is turned on for the main
+# branch with "Require a pull request before merging" and "Require review
+# from Code Owners" checked. See quill-games/EDITORS.md for the steps.
+#
+# Replace @akirasmos with real GitHub usernames (or a team like
+# @your-org/quirdle-editors). Later lines override earlier ones.
+
+# Everything in the games section: the games lead.
+/quill-games/                          @akirasmos
+
+# Quirdle word schedule: the Quirdle editors (list several people here).
+/quill-games/js/quirdle-answers.js     @akirasmos
+
+# Quill Mini puzzles: the one Mini editor.
+/quill-games/js/mini-puzzles.js        @akirasmos
+
+# Nobody can quietly change the rules above.
+/.github/CODEOWNERS                    @akirasmos

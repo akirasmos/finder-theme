@@ -1,12 +1,16 @@
-/* Mini Crossword puzzles. One per day, in order, starting on the launch
- * date set in mini.js. When the list runs out it starts over from the top.
+/* Quill Mini puzzles. MINI EDITOR ONLY.
  *
- * Adding a puzzle:
+ * Who can change this file is controlled by .github/CODEOWNERS.
+ * The easiest way to make a puzzle is editor/mini.html: build the grid, write
+ * the clues, and copy the finished entry into this list.
+ *
+ * Each puzzle:
+ *   date:   optional "YYYY-MM-DD". A puzzle with today's date always wins.
+ *           Puzzles without a date are used in rotation on any other day.
  *   grid:   5 rows of 5 characters. Letters for answers, "#" for black squares.
  *   across: [ANSWER, clue] for every across word (2+ letters), in any order.
  *   down:   [ANSWER, clue] for every down word, in any order.
- * Clue numbers are worked out from the grid automatically. If an answer
- * doesn't match the grid, the browser console will say which one.
+ * Clue numbers are worked out from the grid automatically.
  */
 window.MINI_PUZZLES = [
   {

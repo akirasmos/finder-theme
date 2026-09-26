@@ -12,17 +12,25 @@ works on any host: GitHub Pages, Netlify, your school's web server, or an
 
 ```
 quill-games/
-├── index.html        Games home page (links to both games)
-├── quirdle.html      Quirdle
-├── mini.html         Quill Mini crossword
-├── css/games.css     Shared styles (colors are at the top)
+├── index.html              Games home page (links to both games)
+├── quirdle.html            Quirdle
+├── mini.html               Quill Mini crossword
+├── EDITORS.md              How to make puzzles, permissions, going live
+├── editor/
+│   ├── quirdle.html        Schedule Quirdle words by date
+│   └── mini.html           Build, check and test-solve a Mini
+├── css/games.css           Shared styles (colors are at the top)
 └── js/
-    ├── common.js     Launch date, saving, pop-ups, keyboard
-    ├── words.js      Quirdle answers + accepted guesses
-    ├── puzzles.js    Mini Crossword puzzles
+    ├── quirdle-answers.js  Quirdle words by date  (Quirdle editors only)
+    ├── mini-puzzles.js     Quill Mini puzzles     (Mini editor only)
+    ├── quirdle-valid.js    Words players may guess (no need to edit)
+    ├── common.js           Launch date, saving, pop-ups, keyboard
     ├── quirdle.js
     └── mini.js
 ```
+
+**Making puzzles, controlling who can publish them, and putting the games on
+mkquill.com are all covered in [EDITORS.md](EDITORS.md).**
 
 ## Try it locally
 
@@ -34,51 +42,19 @@ python3 -m http.server 8000
 
 (Opening `index.html` by double-clicking works too.)
 
-## Putting it on the site
-
-Upload the whole `quill-games` folder next to your newspaper's pages, then add a
-**Games** link to your nav bar that points to `quill-games/index.html`.
-
 ## Daily puzzles
 
 Every player gets the same puzzle on the same day. The puzzle changes at local
 midnight. Day 1 is `LAUNCH_DATE` at the top of `js/common.js`. Set it to the day
 you go live.
 
-### Quirdle words
+- **Quirdle:** a word scheduled for today's date in `js/quirdle-answers.js`
+  wins. Otherwise the next word from the backup list is used.
+- **Quill Mini:** a puzzle whose `date` is today wins. Otherwise the undated
+  puzzles take turns, so keep adding them.
 
-`js/words.js` has two lists:
-
-- `QUIRDLE_ANSWERS`: one answer per day, in order. The first few are
-  newspaper-themed (QUILL, WRITE, STORY, PAPER, PRINT). Swap in school-themed words
-  (mascot, teacher nicknames, etc.) wherever you like. Words must be 5 lowercase
-  letters. The list has about 645 words (almost two years) and then starts over.
-- `QUIRDLE_VALID`: extra words that are accepted as guesses but never used as
-  answers.
-
-### Mini Crossword puzzles
-
-`js/puzzles.js` has one entry per day. After the last one it starts over, so
-**keep adding puzzles** (a staff crossword editor is a great job for this). Format:
-
-```js
-{
-  title: "Deadline Day",
-  author: "Your Name",
-  grid: ["##SOD",
-         "#PLAY",
-         "WRITE",
-         "EACH#",
-         "BYE##"],          // "#" = black square
-  across: [["SOD", "Grass sold in rolls"], ...],
-  down:   [["SLICE", "Piece of pizza"], ...],
-}
-```
-
-Clue numbers are worked out from the grid, so you only pair each answer with
-its clue. Every row and column of letters has to spell a real word. If a clue is
-missing or doesn't match the grid, the browser's developer console will tell you
-which one.
+Use the editor pages to change either one. They check everything and produce
+the finished file text. See [EDITORS.md](EDITORS.md).
 
 ## Customizing the look
 

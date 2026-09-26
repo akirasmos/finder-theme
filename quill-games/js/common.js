@@ -18,6 +18,14 @@
     return Math.max(0, localDayNumber(date || new Date()) - launch);
   }
 
+  // Today's date in the player's timezone as "YYYY-MM-DD", used to look up
+  // scheduled puzzles.
+  function dateKey(date) {
+    var d = date || new Date();
+    var pad = function (n) { return (n < 10 ? "0" : "") + n; };
+    return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+  }
+
   function load(key, fallback) {
     try {
       var raw = localStorage.getItem(key);
@@ -154,6 +162,8 @@
   window.Quill = {
     buildKeyboard: buildKeyboard,
     puzzleNumber: puzzleNumber,
+    dateKey: dateKey,
+    LAUNCH_DATE: LAUNCH_DATE,
     load: load,
     save: save,
     toast: toast,

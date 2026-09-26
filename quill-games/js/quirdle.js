@@ -7,10 +7,12 @@
   var WIN_WORDS = ["Stop the presses!", "Front-page news!", "Headline worthy!", "Great scoop!", "Nice reporting!", "Made deadline!"];
 
   var answers = window.QUIRDLE_ANSWERS;
-  var valid = new Set(window.QUIRDLE_VALID.split(" ").concat(answers));
+  var schedule = window.QUIRDLE_SCHEDULE || {};
+  var valid = new Set(window.QUIRDLE_VALID.split(" ").concat(answers, Object.values(schedule)));
 
+  // A word scheduled for today wins; otherwise take the next backup word.
   var day = Quill.puzzleNumber();
-  var solution = answers[day % answers.length];
+  var solution = (schedule[Quill.dateKey()] || answers[day % answers.length]).toLowerCase();
 
   var state = Quill.load(STATE_KEY, null);
   if (!state || state.day !== day) {

@@ -4,8 +4,23 @@
   var STATE_KEY = "mini-state";
   var STATS_KEY = "mini-stats";
 
+  // A puzzle dated today wins; otherwise rotate through the undated ones.
   var day = Quill.puzzleNumber();
-  var puzzle = window.MINI_PUZZLES[day % window.MINI_PUZZLES.length];
+  var all = window.MINI_PUZZLES;
+  var undated = all.filter(function (p) { return !p.date; });
+  var pool = undated.length ? undated : all;
+  var puzzle = all.find(function (p) { return p.date === Quill.dateKey(); }) || pool[day % pool.length];
+
+  // Test-solve mode from editor/mini.html: play the draft without touching
+  // the real puzzle's progress or stats.
+  var preview = /[?&]preview\b/.test(location.search) && Quill.load("mini-preview", null);
+  if (preview) {
+    puzzle = preview;
+    STATE_KEY = "mini-preview-state";
+    STATS_KEY = "mini-preview-stats";
+    try { localStorage.removeItem(STATE_KEY); } catch (e) {}
+    document.title = "Test solve – Quill Mini";
+  }
 
   // ---------- Build the puzzle model ----------
   var solution = puzzle.grid.map(function (row) { return row.toUpperCase().split(""); });
@@ -419,7 +434,7 @@
   });
 
   // ---------- Init ----------
-  document.getElementById("date").textContent = Quill.prettyDate();
+  document.getElementById("date").textContent = preview ? "Test solve (not saved)" : Quill.prettyDate();
   document.getElementById("byline").textContent =
     (puzzle.title ? "“" + puzzle.title + "” " : "") + "by " + (puzzle.author || "The Quill Staff");
   selectWord(ordered[0]);
