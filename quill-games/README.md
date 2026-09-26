@@ -84,7 +84,7 @@ which one.
 
 The colors are CSS variables at the top of `css/games.css`. `--brand` is Quill
 green and `--gold` is Golden Eagles gold. If mkquill.com uses slightly different
-shades, paste its hex codes there and everything updates. Dark mode is automatic.
+shades, paste its hex codes there and everything updates. The games always display in light mode, like mkquill.com.
 Fonts are Libre Baskerville (masthead), Oswald (labels and nav) and Source Sans 3
 (text) from Google Fonts.
 

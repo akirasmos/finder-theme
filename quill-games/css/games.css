@@ -2,6 +2,8 @@
 /* Colors follow Morris Knolls green and gold. Change these to match
    mkquill.com exactly if you have the site's hex codes. */
 :root {
+  /* Always light, like mkquill.com: no dark mode. */
+  color-scheme: light;
   --bg: #ffffff;
   --surface: #f4f6f3;
   --text: #1b1b1b;
@@ -30,32 +32,6 @@
   --serif: "Libre Baskerville", Georgia, "Times New Roman", serif;
   --display: "Oswald", "Arial Narrow", Arial, sans-serif;
   --sans: "Source Sans 3", "Segoe UI", Arial, sans-serif;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #111513;
-    --surface: #1a201c;
-    --text: #eef1ee;
-    --muted: #a3aba5;
-    --line: #313a34;
-    --brand: #16553a;
-    --brand-dark: #0b2e1f;
-    --heading: #8fd1ad;
-    --key: #5f6862;
-    --key-text: #ffffff;
-    --correct: #1f7a52;
-    --present: #c8921c;
-    --absent: #39413b;
-    --tile-border: #39413b;
-    --tile-filled: #5f6862;
-    --cell-active: #b8860b;
-    --cell-word: #1f4a33;
-    --cell-bg: #242b26;
-    --block: #000000;
-    --grid-border: #5f6862;
-    --shadow: 0 6px 24px rgba(0, 0, 0, 0.6);
-  }
 }
 
 * { box-sizing: border-box; }
