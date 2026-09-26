@@ -117,10 +117,12 @@
     }
     .clue-bar svg { width: 22px; height: 22px; }
 
-    .grid-wrap { position: relative; }
+    .grid-wrap { position: relative; container-type: inline-size; }
     .grid {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      /* Fixed tracks so letters never resize the squares. */
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-rows: repeat(5, minmax(0, 1fr));
       border: 3px solid var(--grid-border);
       aspect-ratio: 1;
       width: 100%;
@@ -134,7 +136,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: clamp(28px, 10vw, 52px);
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+      line-height: 1;
+      font-size: 11cqw;
       font-weight: 500;
       text-transform: uppercase;
       cursor: pointer;
@@ -146,7 +152,8 @@
       position: absolute;
       top: 3px;
       left: 4px;
-      font-size: clamp(10px, 3vw, 15px);
+      font-size: 3.2cqw;
+      line-height: 1;
       font-weight: 600;
     }
     .cell.wrong .ch { color: #d0021b; }
