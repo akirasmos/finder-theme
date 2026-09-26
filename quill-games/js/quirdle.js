@@ -4,7 +4,7 @@
   var MAX_GUESSES = 6;
   var STATE_KEY = "quirdle-state";
   var STATS_KEY = "quirdle-stats";
-  var WIN_WORDS = ["Genius", "Magnificent", "Impressive", "Splendid", "Great", "Phew"];
+  var WIN_WORDS = ["Stop the presses!", "Front-page news!", "Headline worthy!", "Great scoop!", "Nice reporting!", "Made deadline!"];
 
   var answers = window.QUIRDLE_ANSWERS;
   var valid = new Set(window.QUIRDLE_VALID.split(" ").concat(answers));

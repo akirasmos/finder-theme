@@ -1,9 +1,10 @@
 # The Quill Games
 
-A daily games section for *The Quill*, in the style of NYT Games:
+A daily games section for *The Quill*, the student news publication of Morris
+Knolls High School, styled in The Quill's green and gold to sit alongside mkquill.com:
 
 - **Quirdle**: guess the hidden 5-letter word in 6 tries.
-- **The Mini**: a 5×5 daily crossword with a timer.
+- **Quill Mini**: a 5×5 daily crossword with a timer.
 
 It's plain HTML, CSS and JavaScript with no build step and no server code, so it
 works on any host: GitHub Pages, Netlify, your school's web server, or an
@@ -13,7 +14,7 @@ works on any host: GitHub Pages, Netlify, your school's web server, or an
 quill-games/
 ├── index.html        Games home page (links to both games)
 ├── quirdle.html      Quirdle
-├── mini.html         Mini Crossword
+├── mini.html         Quill Mini crossword
 ├── css/games.css     Shared styles (colors are at the top)
 └── js/
     ├── common.js     Launch date, saving, pop-ups, keyboard
@@ -36,9 +37,7 @@ python3 -m http.server 8000
 ## Putting it on the site
 
 Upload the whole `quill-games` folder next to your newspaper's pages, then add a
-**Games** link to your nav bar that points to `quill-games/index.html`. The
-"← Back to The Quill" link at the top of the games page goes to `../`. Change it
-in `index.html` if your home page lives somewhere else.
+**Games** link to your nav bar that points to `quill-games/index.html`.
 
 ## Daily puzzles
 
@@ -83,9 +82,14 @@ which one.
 
 ## Customizing the look
 
-The colors are CSS variables at the top of `css/games.css`. `--brand` is the
-Quill ink blue. Dark mode is automatic. Fonts are Playfair Display (masthead) and
-Libre Franklin (text) from Google Fonts.
+The colors are CSS variables at the top of `css/games.css`. `--brand` is Quill
+green and `--gold` is Golden Eagles gold. If mkquill.com uses slightly different
+shades, paste its hex codes there and everything updates. Dark mode is automatic.
+Fonts are Libre Baskerville (masthead), Oswald (labels and nav) and Source Sans 3
+(text) from Google Fonts.
+
+The nav bar on the games home page (`index.html`) links to the main sections of
+mkquill.com. Edit that list if the site's sections change.
 
 ## Notes
 

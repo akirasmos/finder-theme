@@ -1,4 +1,4 @@
-/* The Mini Crossword. */
+/* The Quill Mini crossword. */
 (function () {
   var SIZE = 5;
   var STATE_KEY = "mini-state";
@@ -151,7 +151,7 @@
   }
 
   // Jump to the next (or previous) clue, preferring clues that still have
-  // empty squares, like the NYT app does.
+  // empty squares.
   function nextWord(step) {
     var start = ordered.indexOf(currentWord());
     for (var k = 1; k <= ordered.length; k++) {

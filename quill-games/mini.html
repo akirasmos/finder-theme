@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>The Mini Crossword — The Quill Games</title>
-  <meta name="description" content="A bite-sized daily crossword from The Quill.">
+  <title>Quill Mini – The Quill Games</title>
+  <meta name="description" content="The Quill Mini: a quick 5x5 daily crossword from The Quill at Morris Knolls High School.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Oswald:wght@400;500;600&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/games.css">
   <style>
     .toolbar {
@@ -23,9 +23,10 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      font-weight: 700;
+      font-family: var(--display);
+      font-weight: 500;
       font-variant-numeric: tabular-nums;
-      font-size: 17px;
+      font-size: 18px;
       background: none;
       border: 0;
       color: var(--text);
@@ -40,8 +41,11 @@
       background: none;
       border: 0;
       color: var(--text);
+      font-family: var(--display);
+      text-transform: uppercase;
+      letter-spacing: 1px;
       font-size: 15px;
-      font-weight: 600;
+      font-weight: 500;
       padding: 8px 12px;
       border-radius: 4px;
     }
@@ -90,7 +94,7 @@
       gap: 12px;
       flex-wrap: wrap;
     }
-    .puzzle-meta h1 { font-family: var(--serif); font-size: 30px; margin: 0; }
+    .puzzle-meta h1 { font-family: var(--serif); font-size: 30px; margin: 0; color: var(--heading); }
     .puzzle-meta .date { font-size: 16px; color: var(--muted); }
     .puzzle-meta .byline { font-size: 14px; color: var(--muted); width: 100%; }
 
@@ -101,6 +105,7 @@
       color: var(--text);
       min-height: 56px;
       border-radius: 4px;
+      border-left: 5px solid var(--brand);
       margin-bottom: 12px;
       font-size: 17px;
     }
@@ -193,7 +198,7 @@
       border: 3px solid var(--grid-border);
     }
     .cover.show { display: flex; }
-    .cover h2 { font-family: var(--serif); font-size: 28px; margin: 0; }
+    .cover h2 { font-family: var(--serif); font-size: 28px; margin: 0; color: var(--heading); }
     .cover p { margin: 0; color: var(--muted); }
 
     .clue-lists {
@@ -202,11 +207,13 @@
       gap: 24px;
     }
     .clue-lists h3 {
-      font-size: 14px;
-      font-weight: 800;
+      font-family: var(--display);
+      font-size: 16px;
+      font-weight: 500;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      border-bottom: 1px solid var(--line);
+      letter-spacing: 1.5px;
+      color: var(--heading);
+      border-bottom: 3px solid var(--gold);
       padding-bottom: 8px;
       margin: 0 0 4px;
     }
@@ -243,7 +250,7 @@
     <a class="brand" href="index.html" aria-label="Back to The Quill Games">
       <span class="masthead">The Quill</span><span class="section">Games</span>
     </a>
-    <span class="title">The Mini</span>
+    <span class="title">Quill Mini</span>
     <div class="header-actions">
       <button class="icon-btn" data-open="help-modal" aria-label="How to play">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/></svg>
@@ -279,7 +286,7 @@
 
   <div class="layout">
     <div class="puzzle-meta">
-      <h1>The Mini Crossword</h1>
+      <h1>The Quill Mini</h1>
       <span class="date" id="date"></span>
       <span class="byline" id="byline"></span>
     </div>
@@ -297,14 +304,14 @@
       <div class="grid-wrap">
         <div class="grid" id="grid" aria-label="Crossword grid"></div>
         <div class="cover" id="start-cover">
-          <h2>Ready to start solving?</h2>
-          <p>Five across, five down, and the clock is ticking.</p>
-          <button class="btn" id="start-btn" style="background:var(--text);color:var(--bg)">Play</button>
+          <h2>Pencils ready?</h2>
+          <p>Five across, five down, one clock. It starts when you hit Play.</p>
+          <button class="btn" id="start-btn">Play</button>
         </div>
         <div class="cover" id="pause-cover">
-          <h2>Your game is paused.</h2>
-          <p>Ready to play?</p>
-          <button class="btn" id="resume-btn" style="background:var(--text);color:var(--bg)">Continue</button>
+          <h2>Taking a break</h2>
+          <p>The clock is stopped. Your answers are saved.</p>
+          <button class="btn" id="resume-btn">Resume</button>
         </div>
       </div>
       <div class="keyboard touch-kb" id="keyboard"></div>
@@ -321,14 +328,14 @@
       <button class="icon-btn close" data-close aria-label="Close">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
       </button>
-      <h2 id="help-title">How To Play</h2>
+      <h2 id="help-title">How to Play the Quill Mini</h2>
       <ul>
-        <li>Tap or click a square, then type to fill it in.</li>
-        <li>Tap the highlighted square again (or press the space bar) to switch between Across and Down.</li>
-        <li>Use the arrow keys to move around and Tab or Enter to jump to the next clue.</li>
-        <li>Stuck? <b>Check</b> shows wrong letters in red. <b>Reveal</b> fills in the answer.</li>
+        <li>Pick a square and start typing. The highlighted row or column is the clue shown above the grid.</li>
+        <li>Tap the same square again (or press Space) to flip between Across and Down.</li>
+        <li>Arrow keys move you around. Tab or Enter skips to the next clue.</li>
+        <li>Stuck? <b>Check</b> marks wrong letters in red and <b>Reveal</b> fills in answers, but help doesn't count toward your streak or best time.</li>
       </ul>
-      <p>A new Mini is released every day at midnight. How fast can you solve it?</p>
+      <p>A new puzzle goes to press every night at midnight.</p>
     </div>
   </div>
 
@@ -337,8 +344,8 @@
       <button class="icon-btn close" data-close aria-label="Close">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
       </button>
-      <div style="font-size:48px">🎉</div>
-      <h2 id="done-title">Congratulations!</h2>
+      <div style="font-size:44px">✏️</div>
+      <h2 id="done-title">That's a wrap!</h2>
       <p id="done-text"></p>
       <div class="stats-row" id="mini-stats" style="margin-top:16px"></div>
       <div class="modal-actions">
